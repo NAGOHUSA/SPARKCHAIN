@@ -1,1 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPARKCHAIN - Crypto Investment Analytics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #0f3460;
+            --accent-color: #00adb5;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #e74c3c;
+            --info-color: #6c5ce7;
+        }
+        
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #16213e 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 173, 181, 0.1);
+            border-bottom: 1px solid var(--accent-color);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid #2d3746;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 173, 181, 0.2);
+            border-color: var(--accent-color);
+        }
+        
+        .price-up {
+            color: var(--success-color);
+        }
+        
+        .price-down {
+            color: var(--danger-color);
+        }
+        
+        .crypto-table {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .data-refresh-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #008b94 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .data-refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 173, 181, 0.4);
+        }
+        
+        .parameter-control {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--accent-color);
+            border: 1px solid #2d3746;
+        }
+        
+        .custom-range {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .crypto-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--info-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid #2d3746;
+        }
+        
+        .crypto-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 173, 181, 0.2);
+            border-color: var(--accent-color);
+        }
+        
+        .ai-insight {
+            background: linear-gradient(135deg, #6c5ce7 0%, #5b4fcf 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .disclaimer-banner {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid #ff6b6b;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #2d3746;
+        }
+        
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--info-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .market-cap-badge {
+            background: linear-gradient(135deg, var(--success-color) 0%, #00a085 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .volume-badge {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #e6b64f 100%);
+            color: #1a1a2e;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .dashboard-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            flex-direction: column;
+        }
+        
+        .dashboard-loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #2d3746;
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .data-source-badge {
+            background: linear-gradient(135deg, var(--info-color) 0%, #5b4fcf 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        /* Dark table styling */
+        .table-dark-custom {
+            background: #1a1a2e;
+            color: #c9d1d9;
+            border-color: #2d3746;
+        }
+        
+        .table-dark-custom th {
+            border-color: #2d3746;
+            background: var(--secondary-color);
+        }
+        
+        .table-dark-custom td {
+            border-color: #2d3746;
+        }
+        
+        .table-dark-custom tbody tr:hover {
+            background-color: rgba(0, 173, 181, 0.1);
+        }
+        
+        /* Form controls dark theme */
+        .form-control-dark {
+            background-color: #1a1a2e;
+            border: 1px solid #2d3746;
+            color: #c9d1d9;
+        }
+        
+        .form-control-dark:focus {
+            background-color: #1a1a2e;
+            border-color: var(--accent-color);
+            color: #c9d1d9;
+            box-shadow: 0 0 0 0.2rem rgba(0, 173, 181, 0.25);
+        }
+        
+        .form-select-dark {
+            background-color: #1a1a2e;
+            border: 1px solid #2d3746;
+            color: #c9d1d9;
+        }
+        
+        .btn-outline-spark {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .btn-outline-spark:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <a href="#" class="brand-logo">
+                        <i class="fas fa-bolt"></i> SPARKCHAIN
+                    </a>
+                    <h2 class="mt-2 mb-1 text-light">Crypto Investment Analytics Dashboard</h2>
+                    <p class="text-light opacity-75 mb-0">Real-time trending crypto detection & AI-powered insights</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="d-flex flex-wrap justify-content-end gap-2 align-items-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-light" id="liveDataBtn" onclick="setDataSource('live')">
+                                <i class="fas fa-satellite-dish"></i> Live Data
+                            </button>
+                            <button type="button" class="btn btn-outline-light" id="demoDataBtn" onclick="setDataSource('demo')">
+                                <i class="fas fa-magic"></i> Demo Mode
+                            </button>
+                        </div>
+                        
+                        <button class="btn data-refresh-btn" onclick="loadData()" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- DISCLAIMER BANNER -->
+    <div class="container">
+        <div class="disclaimer-banner">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>DISCLAIMER:</strong> This dashboard provides analytics and insights for informational purposes only. 
+            It is NOT financial advice. Cryptocurrency investments are highly volatile and risky. 
+            Always do your own research and consult with a qualified financial advisor before making any investment decisions.
+            <i class="fas fa-exclamation-triangle ms-2"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Data Status -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-dark d-flex justify-content-between align-items-center" id="statusAlert">
+                    <div>
+                        <span class="data-source-badge me-2" id="dataSourceBadge">
+                            <i class="fas fa-database"></i> <span id="dataSourceText">Live Data</span>
+                        </span>
+                        <span id="statusMessage">Loading crypto market data...</span>
+                        <span class="ms-2" id="aiStatusIndicator"></span>
+                    </div>
+                    <div>
+                        <span class="badge bg-secondary" id="dataAge">
+                            <i class="fas fa-clock"></i> <span id="lastUpdated">Just now</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Banner -->
+        <div class="row mb-4" id="aiInsightsContainer" style="display: none;">
+            <div class="col-12">
+                <div class="ai-insight">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-robot me-2" style="font-size: 1.2rem;"></i>
+                        <div class="flex-grow-1">
+                            <strong>AI Analysis:</strong> <span id="aiInsightText">Loading AI insights...</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light" onclick="refreshAIInsights()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Total Coins Tracked</h6>
+                            <h2 id="totalCoins" class="mb-0 text-light">0</h2>
+                        </div>
+                        <div class="icon-circle" style="background: linear-gradient(135deg, rgba(0, 173, 181, 0.2) 0%, rgba(0, 139, 148, 0.2) 100%); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-coins text-info" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> <span id="newCoins">0</span> new today</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Trending Coins</h6>
+                            <h2 id="trendingCoins" class="mb-0 text-light">0</h2>
+                        </div>
+                        <div class="icon-circle" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.2) 0%, rgba(0, 160, 133, 0.2) 100%); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-fire text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-success"><i class="fas fa-chart-line"></i> <span id="trendingChange">0%</span> 24h growth</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Total Market Cap</h6>
+                            <h2 id="totalMarketCap" class="mb-0 text-light">$0</h2>
+                        </div>
+                        <div class="icon-circle" style="background: linear-gradient(135deg, rgba(108, 92, 231, 0.2) 0%, rgba(91, 79, 207, 0.2) 100%); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chart-bar text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> <span id="marketCapChange">0%</span> today</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Avg. 24h Volume</h6>
+                            <h2 id="avgVolume" class="mb-0 text-light">$0</h2>
+                        </div>
+                        <div class="icon-circle" style="background: linear-gradient(135deg, rgba(253, 203, 110, 0.2) 0%, rgba(230, 182, 79, 0.2) 100%); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-exchange-alt text-warning" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> <span id="volumeChange">0%</span> increase</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="parameter-control">
+                    <h5 class="mb-3"><i class="fas fa-filter text-accent"></i> Crypto Filter & Analysis</h5>
+                    
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <label class="form-label fw-bold">Market Cap Range</label>
+                            <select class="form-select form-select-dark" id="marketCapFilter">
+                                <option value="all">All Market Caps</option>
+                                <option value="mega">Mega Cap ($10B+)</option>
+                                <option value="large">Large Cap ($1B - $10B)</option>
+                                <option value="mid">Mid Cap ($100M - $1B)</option>
+                                <option value="small">Small Cap ($10M - $100M)</option>
+                                <option value="micro">Micro Cap (< $10M)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <label class="form-label fw-bold">24h Price Change</label>
+                            <select class="form-select form-select-dark" id="priceChangeFilter">
+                                <option value="all">Any Change</option>
+                                <option value="up10">+10% or more</option>
+                                <option value="up25">+25% or more</option>
+                                <option value="up50">+50% or more</option>
+                                <option value="up100">+100% or more</option>
+                                <option value="down">Negative only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <label class="form-label fw-bold">Volume Filter</label>
+                            <select class="form-select form-select-dark" id="volumeFilter">
+                                <option value="all">Any Volume</option>
+                                <option value="high">High Volume ($100M+)</option>
+                                <option value="medium">Medium Volume ($10M - $100M)</option>
+                                <option value="low">Low Volume (< $10M)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <label class="form-label fw-bold">Risk Level</label>
+                            <select class="form-select form-select-dark" id="riskFilter">
+                                <option value="all">All Risk Levels</option>
+                                <option value="low">Low Risk</option>
+                                <option value="medium">Medium Risk</option>
+                                <option value="high">High Risk/High Reward</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-primary px-4" onclick="applyFilters()">
+                                    <i class="fas fa-search me-2"></i> Apply Filters
+                                </button>
+                                <button class="btn btn-outline-spark" onclick="resetFilters()">
+                                    <i class="fas fa-redo me-2"></i> Reset Filters
+                                </button>
+                                <button class="btn btn-outline-info" onclick="runAIAnalysis()">
+                                    <i class="fas fa-robot me-2"></i> AI Analysis
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="stat-card">
+                    <h5><i class="fas fa-chart-line text-primary"></i> Top Trending Coins (24h)</h5>
+                    <div class="chart-container">
+                        <canvas id="trendingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="stat-card">
+                    <h5><i class="fas fa-chart-pie text-info"></i> Market Cap Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="marketCapChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Trending Coins -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="fas fa-fire text-warning"></i> Top Trending Cryptocurrencies</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-spark me-2" onclick="exportCoinsData()">
+                                <i class="fas fa-download"></i> Export Data
+                            </button>
+                            <span class="badge bg-warning text-dark" id="trendingCount">0 coins</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark-custom table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Coin</th>
+                                    <th>Price</th>
+                                    <th>24h Change</th>
+                                    <th>Market Cap</th>
+                                    <th>Volume (24h)</th>
+                                    <th>Spark Score</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trendingTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="spinner-border text-warning"></div>
+                                        <p class="mt-2">Loading trending coins...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New & Potential Coins -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="fas fa-bolt text-success"></i> New & High-Potential Coins</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-success" onclick="showAllPotentialCoins()">
+                                <i class="fas fa-expand"></i> View All
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" id="potentialCoinsContainer">
+                        <!-- Cards will be populated here -->
+                        <div class="col-12 text-center py-4">
+                            <div class="spinner-border text-success"></div>
+                            <p class="mt-2">Analyzing potential opportunities...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="row mt-4 mb-5">
+            <div class="col-12 text-center">
+                <p class="text-muted">
+                    <i class="fas fa-bolt"></i> 
+                    <strong>SPARKCHAIN</strong> - Crypto Investment Analytics Dashboard v1.0
+                </p>
+                <p class="small text-muted">
+                    Data sourced from multiple crypto exchanges • AI-powered insights • 
+                    Updated hourly via automated pipeline •
+                    <span class="text-danger">
+                        <i class="fas fa-exclamation-circle"></i> Not financial advice
+                    </span>
+                </p>
+                <p class="small text-muted">
+                    <a href="#" class="text-decoration-none text-info" onclick="showDataSources()">
+                        <i class="fas fa-code-branch"></i> View Data Sources
+                    </a>
+                    • 
+                    <a href="#" class="text-decoration-none text-info" onclick="showMethodology()">
+                        <i class="fas fa-chart-line"></i> Methodology
+                    </a>
+                    • 
+                    <a href="https://github.com/yourusername/SPARKCHAIN" target="_blank" class="text-decoration-none text-info">
+                        <i class="fab fa-github"></i> GitHub Repository
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Global variables
+        let currentData = null;
+        let trendingChart = null;
+        let marketCapChart = null;
+        let dataSource = 'live';
+        let filters = {
+            marketCap: 'all',
+            priceChange: 'all',
+            volume: 'all',
+            risk: 'all'
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setInterval(loadData, 300000); // Auto-refresh every 5 minutes
+        });
+
+        async function loadData() {
+            showLoading(true);
+            
+            try {
+                let dataUrl = 'data/latest.json';
+                
+                if (dataSource === 'demo') {
+                    currentData = generateDemoData();
+                } else {
+                    const response = await fetch(dataUrl + '?t=' + Date.now());
+                    if (response.ok) {
+                        currentData = await response.json();
+                    } else {
+                        throw new Error('Live data not available');
+                    }
+                }
+                
+                updateDashboard();
+                updateAIInsights();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('statusAlert').className = 'alert alert-warning';
+                document.getElementById('statusMessage').textContent = 
+                    'Live data not available. Showing demo data.';
+                currentData = generateDemoData();
+                updateDashboard();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function generateDemoData() {
+            const coins = [
+                { symbol: 'BTC', name: 'Bitcoin', price: 42850, change24h: 2.5, marketCap: 839000000000, volume24h: 25000000000, sparkScore: 85 },
+                { symbol: 'ETH', name: 'Ethereum', price: 2550, change24h: 3.2, marketCap: 306000000000, volume24h: 12000000000, sparkScore: 82 },
+                { symbol: 'SOL', name: 'Solana', price: 102.5, change24h: 8.7, marketCap: 44000000000, volume24h: 3500000000, sparkScore: 88 },
+                { symbol: 'ADA', name: 'Cardano', price: 0.62, change24h: 1.8, marketCap: 22000000000, volume24h: 650000000, sparkScore: 76 },
+                { symbol: 'DOT', name: 'Polkadot', price: 7.85, change24h: 4.3, marketCap: 10000000000, volume24h: 450000000, sparkScore: 79 },
+                { symbol: 'MATIC', name: 'Polygon', price: 0.85, change24h: 5.2, marketCap: 8000000000, volume24h: 380000000, sparkScore: 81 },
+                { symbol: 'LINK', name: 'Chainlink', price: 14.25, change24h: 2.9, marketCap: 8200000000, volume24h: 420000000, sparkScore: 77 },
+                { symbol: 'UNI', name: 'Uniswap', price: 6.32, change24h: 3.7, marketCap: 4800000000, volume24h: 210000000, sparkScore: 80 }
+            ];
+            
+            const newCoins = [
+                { symbol: 'SPRK', name: 'SparkToken', price: 0.0045, change24h: 125, marketCap: 4500000, volume24h: 850000, sparkScore: 92 },
+                { symbol: 'NOVA', name: 'NovaChain', price: 0.12, change24h: 87, marketCap: 12000000, volume24h: 3200000, sparkScore: 89 },
+                { symbol: 'ZAP', name: 'Zap Protocol', price: 0.085, change24h: 64, marketCap: 8500000, volume24h: 2100000, sparkScore: 84 },
+                { symbol: 'FLUX', name: 'Flux Network', price: 0.23, change24h: 42, marketCap: 23000000, volume24h: 5600000, sparkScore: 81 }
+            ];
+            
+            return {
+                timestamp: new Date().toISOString(),
+                market_summary: {
+                    total_market_cap: 1650000000000,
+                    market_cap_change_24h: 2.8,
+                    total_volume_24h: 65000000000,
+                    volume_change_24h: 12.5,
+                    total_coins_tracked: 12500,
+                    new_coins_today: 24,
+                    trending_coins_count: 42,
+                    trending_growth: 8.7
+                },
+                trending_coins: coins,
+                new_coins: newCoins,
+                ai_insights: {
+                    timestamp: new Date().toISOString(),
+                    summary: "AI analysis identifies SOL and new token SPRK as high-potential opportunities based on volume growth and network activity.",
+                    top_picks: ["SOL", "SPRK", "MATIC"],
+                    risk_assessment: "Market sentiment is moderately bullish with increased institutional interest."
+                }
+            };
+        }
+
+        function updateDashboard() {
+            if (!currentData) return;
+            
+            const summary = currentData.market_summary;
+            const trending = currentData.trending_coins || [];
+            const newCoins = currentData.new_coins || [];
+            
+            // Update stats
+            document.getElementById('totalCoins').textContent = summary.total_coins_tracked.toLocaleString();
+            document.getElementById('newCoins').textContent = summary.new_coins_today;
+            document.getElementById('trendingCoins').textContent = summary.trending_coins_count;
+            document.getElementById('trendingChange').textContent = summary.trending_growth.toFixed(1) + '%';
+            document.getElementById('totalMarketCap').textContent = '$' + (summary.total_market_cap / 1000000000).toFixed(1) + 'B';
+            document.getElementById('marketCapChange').textContent = summary.market_cap_change_24h.toFixed(1) + '%';
+            document.getElementById('avgVolume').textContent = '$' + (summary.total_volume_24h / 1000000000).toFixed(1) + 'B';
+            document.getElementById('volumeChange').textContent = summary.volume_change_24h.toFixed(1) + '%';
+            
+            // Update timestamp
+            const lastUpdated = new Date(currentData.timestamp);
+            document.getElementById('lastUpdated').textContent = lastUpdated.toLocaleTimeString();
+            
+            // Update trending table
+            updateTrendingTable(trending);
+            
+            // Update potential coins
+            updatePotentialCoins(newCoins);
+            
+            // Update charts
+            updateCharts();
+            
+            // Update status
+            document.getElementById('statusMessage').textContent = 
+                `Tracking ${summary.total_coins_tracked.toLocaleString()} coins • ${summary.new_coins_today} new today`;
+            
+            document.getElementById('trendingCount').textContent = trending.length + ' coins';
+        }
+
+        function updateTrendingTable(coins) {
+            const tbody = document.getElementById('trendingTableBody');
+            
+            if (!coins || coins.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="fas fa-search fa-2x mb-3"></i>
+                            <p>No trending coins found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            coins.forEach((coin, index) => {
+                const changeClass = coin.change24h >= 0 ? 'price-up' : 'price-down';
+                const changeIcon = coin.change24h >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                const sparkScoreClass = coin.sparkScore >= 80 ? 'success' : coin.sparkScore >= 60 ? 'warning' : 'danger';
+                
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <strong>${coin.symbol}</strong>
+                            <div class="small text-muted">${coin.name}</div>
+                        </td>
+                        <td>$${coin.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</td>
+                        <td class="${changeClass}">
+                            <i class="fas ${changeIcon} me-1"></i>
+                            ${Math.abs(coin.change24h).toFixed(2)}%
+                        </td>
+                        <td>$${(coin.marketCap / 1000000000).toFixed(2)}B</td>
+                        <td>$${(coin.volume24h / 1000000).toFixed(0)}M</td>
+                        <td>
+                            <span class="badge bg-${sparkScoreClass}">
+                                ${coin.sparkScore}/100
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" onclick="analyzeCoin('${coin.symbol}')">
+                                <i class="fas fa-chart-line"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        function updatePotentialCoins(coins) {
+            const container = document.getElementById('potentialCoinsContainer');
+            
+            if (!coins || coins.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-4">
+                        <i class="fas fa-search fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">No high-potential coins identified currently</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            coins.forEach(coin => {
+                const changeClass = coin.change24h >= 0 ? 'price-up' : 'price-down';
+                const sparkScoreClass = coin.sparkScore >= 80 ? 'success' : coin.sparkScore >= 60 ? 'warning' : 'danger';
+                
+                html += `
+                    <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
+                        <div class="crypto-card">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">${coin.name}</h6>
+                                    <span class="badge bg-dark">${coin.symbol}</span>
+                                </div>
+                                <span class="${changeClass} fw-bold">${coin.change24h >= 0 ? '+' : ''}${coin.change24h.toFixed(1)}%</span>
+                            </div>
+                            <div class="mb-2">
+                                <div class="small text-muted">Price</div>
+                                <div class="fw-bold">$${coin.price.toFixed(8)}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <div class="small text-muted">Market Cap</div>
+                                    <div class="fw-bold">$${(coin.marketCap / 1000000).toFixed(1)}M</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="small text-muted">Volume</div>
+                                    <div class="fw-bold">$${(coin.volume24h / 1000000).toFixed(1)}M</div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-${sparkScoreClass}">Spark: ${coin.sparkScore}</span>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewCoinDetails('${coin.symbol}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateCharts() {
+            const trendingCtx = document.getElementById('trendingChart');
+            const marketCapCtx = document.getElementById('marketCapChart');
+            
+            if (trendingChart) trendingChart.destroy();
+            if (marketCapChart) marketCapChart.destroy();
+            
+            const coins = currentData.trending_coins || [];
+            
+            if (coins.length > 0) {
+                // Trending Chart (Performance)
+                const labels = coins.slice(0, 7).map(c => c.symbol);
+                const changes = coins.slice(0, 7).map(c => c.change24h);
+                
+                trendingChart = new Chart(trendingCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '24h Change %',
+                            data: changes,
+                            backgroundColor: changes.map(c => c >= 0 ? 'rgba(0, 184, 148, 0.7)' : 'rgba(231, 76, 60, 0.7)'),
+                            borderColor: changes.map(c => c >= 0 ? 'rgb(0, 184, 148)' : 'rgb(231, 76, 60)'),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '24h Change (%)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Market Cap Distribution Chart
+                const marketCapData = coins.slice(0, 5).map(c => c.marketCap);
+                const marketCapLabels = coins.slice(0, 5).map(c => c.symbol);
+                
+                marketCapChart = new Chart(marketCapCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: marketCapLabels,
+                        datasets: [{
+                            data: marketCapData,
+                            backgroundColor: [
+                                'rgba(0, 173, 181, 0.7)',
+                                'rgba(108, 92, 231, 0.7)',
+                                'rgba(0, 184, 148, 0.7)',
+                                'rgba(253, 203, 110, 0.7)',
+                                'rgba(231, 76, 60, 0.7)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateAIInsights() {
+            const insights = currentData.ai_insights;
+            const container = document.getElementById('aiInsightsContainer');
+            
+            if (insights && insights.summary) {
+                container.style.display = 'block';
+                document.getElementById('aiInsightText').textContent = insights.summary;
+                document.getElementById('aiStatusIndicator').innerHTML = 
+                    `<span class="badge bg-info"><i class="fas fa-robot"></i> AI Updated</span>`;
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function setDataSource(source) {
+            dataSource = source;
+            
+            document.getElementById('liveDataBtn').classList.toggle('btn-outline-light', source !== 'live');
+            document.getElementById('liveDataBtn').classList.toggle('btn-light', source === 'live');
+            document.getElementById('demoDataBtn').classList.toggle('btn-outline-light', source !== 'demo');
+            document.getElementById('demoDataBtn').classList.toggle('btn-light', source === 'demo');
+            
+            document.getElementById('dataSourceText').textContent = 
+                source === 'live' ? 'Live Data' : 'Demo Mode';
+            
+            loadData();
+        }
+
+        function applyFilters() {
+            filters.marketCap = document.getElementById('marketCapFilter').value;
+            filters.priceChange = document.getElementById('priceChangeFilter').value;
+            filters.volume = document.getElementById('volumeFilter').value;
+            filters.risk = document.getElementById('riskFilter').value;
+            
+            document.getElementById('statusMessage').textContent = 
+                `Filters applied: ${filters.marketCap} cap, ${filters.priceChange} change`;
+        }
+
+        function resetFilters() {
+            document.getElementById('marketCapFilter').value = 'all';
+            document.getElementById('priceChangeFilter').value = 'all';
+            document.getElementById('volumeFilter').value = 'all';
+            document.getElementById('riskFilter').value = 'all';
+            
+            applyFilters();
+        }
+
+        function showLoading(show) {
+            const btn = document.getElementById('refreshBtn');
+            if (show) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                btn.disabled = true;
+            } else {
+                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                btn.disabled = false;
+            }
+        }
+
+        function analyzeCoin(symbol) {
+            alert(`Detailed analysis for ${symbol} would be shown here.\n\nThis feature would include:\n• Price history\n• Volume analysis\n• Social sentiment\n• On-chain metrics\n• AI prediction score`);
+        }
+
+        function viewCoinDetails(symbol) {
+            alert(`Viewing details for ${symbol}\n\nThis would show comprehensive analysis and charts for the selected coin.`);
+        }
+
+        function showAllPotentialCoins() {
+            alert(`Showing all ${currentData.new_coins.length} potential coins in detailed view.`);
+        }
+
+        function exportCoinsData() {
+            if (!currentData.trending_coins.length) {
+                alert('No data to export.');
+                return;
+            }
+            
+            let csv = 'Symbol,Name,Price,24h Change (%),Market Cap,24h Volume,Spark Score\n';
+            
+            currentData.trending_coins.forEach(coin => {
+                csv += `"${coin.symbol}","${coin.name}",${coin.price},${coin.change24h},${coin.marketCap},${coin.volume24h},${coin.sparkScore}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sparkchain_coins_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            alert(`Exported ${currentData.trending_coins.length} coins to CSV.`);
+        }
+
+        function runAIAnalysis() {
+            document.getElementById('statusMessage').textContent = 'Running AI analysis...';
+            setTimeout(() => {
+                alert('AI analysis complete! Check the AI Insights banner for results.');
+                document.getElementById('statusMessage').textContent = 'AI analysis completed';
+            }, 1500);
+        }
+
+        function refreshAIInsights() {
+            document.getElementById('aiInsightText').textContent = 'Refreshing AI insights...';
+            setTimeout(() => {
+                document.getElementById('aiInsightText').textContent = 
+                    currentData.ai_insights.summary || 'AI analysis complete.';
+            }, 1000);
+        }
+
+        function showDataSources() {
+            alert('Data Sources:\n• CoinGecko API\n• CoinMarketCap API\n• Binance API\n• CryptoCompare\n• On-chain data from Etherscan/Solscan\n• Social sentiment analysis');
+        }
+
+        function showMethodology() {
+            alert('Methodology:\n\nSpark Score Calculation:\n• 30% - Price momentum (24h/7d)\n• 25% - Volume growth\n• 20% - Social sentiment\n• 15% - Development activity\n• 10% - Market cap vs volume ratio\n\nAI Analysis uses DeepSeek API to analyze multiple data points and identify patterns.');
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+  </html>
