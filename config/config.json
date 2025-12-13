@@ -1,1 +1,37 @@
-
+{
+  "project_name": "SPARKCHAIN",
+  "version": "1.0.0",
+  "data_sources": {
+    "coingecko": {
+      "enabled": true,
+      "api_url": "https://api.coingecko.com/api/v3",
+      "rate_limit": "30 calls/minute"
+    },
+    "cryptocompare": {
+      "enabled": true,
+      "api_url": "https://min-api.cryptocompare.com/data",
+      "requires_key": true
+    }
+  },
+  "analysis": {
+    "deepseek_api": {
+      "enabled": true,
+      "model": "deepseek-chat",
+      "max_tokens": 500
+    },
+    "spark_score_weights": {
+      "momentum": 0.3,
+      "volume_ratio": 0.25,
+      "market_cap": 0.2,
+      "liquidity": 0.15,
+      "stability": 0.1
+    }
+  },
+  "dashboard": {
+    "update_interval": 3600,
+    "max_trending_coins": 20,
+    "max_new_coins": 10,
+    "min_market_cap": 1000000,
+    "min_volume": 100000
+  }
+}
