@@ -1,454 +1,454 @@
 {
-  "timestamp": "2025-12-14T16:23:15.279300",
+  "timestamp": "2025-12-14T17:16:56.021531",
   "top_predictions": [
     {
       "symbol": "NIGHT",
       "name": "Midnight",
-      "price": 0.067974,
-      "change24h": 38.31724,
-      "marketCap": 1143044010,
-      "predictionScore": 93.1,
-      "predictedChange7d": 33.6,
-      "predictedChange30d": 48.5,
+      "price": 0.069206,
+      "change24h": 39.00535,
+      "marketCap": 1152283174,
+      "predictionScore": 89.9,
+      "predictedChange7d": 22.8,
+      "predictedChange30d": 53.5,
       "confidence": "high",
       "factors": [
         "Strong momentum",
         "High volume ratio",
         "Increasing adoption rate"
       ],
-      "timestamp": "2025-12-14T16:23:15.276908"
+      "timestamp": "2025-12-14T17:16:56.019144"
     },
     {
-      "symbol": "ZEC",
-      "name": "Zcash",
-      "price": 405.89,
-      "change24h": -7.29688,
-      "marketCap": 6670722104,
-      "predictionScore": 79.2,
-      "predictedChange7d": 6.5,
-      "predictedChange30d": -1.8,
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "price": 13.42,
+      "change24h": -2.23808,
+      "marketCap": 9402181136,
+      "predictionScore": 79.9,
+      "predictedChange7d": 0.4,
+      "predictedChange30d": 10.5,
       "confidence": "medium",
       "factors": [
-        "High volume ratio",
         "Price stability",
-        "Positive network growth"
+        "Exchange listings upcoming",
+        "Technical breakout pattern"
       ],
-      "timestamp": "2025-12-14T16:23:15.276955"
+      "timestamp": "2025-12-14T17:16:56.020135"
     },
     {
-      "symbol": "AVAX",
-      "name": "Avalanche",
-      "price": 13.04,
-      "change24h": -2.52943,
-      "marketCap": 5590650076,
-      "predictionScore": 79.0,
-      "predictedChange7d": 3.6,
-      "predictedChange30d": 6.5,
+      "symbol": "CBBTC",
+      "name": "Coinbase Wrapped BTC",
+      "price": 88928,
+      "change24h": -1.25349,
+      "marketCap": 6451360638,
+      "predictionScore": 79.7,
+      "predictedChange7d": 6.6,
+      "predictedChange30d": 5.0,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Increasing adoption rate",
+        "Exchange listings upcoming"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020561"
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "price": 3080.81,
+      "change24h": -0.74398,
+      "marketCap": 373600670208,
+      "predictionScore": 79.1,
+      "predictedChange7d": 4.1,
+      "predictedChange30d": -0.8,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Increasing adoption rate",
         "Development milestones"
       ],
-      "timestamp": "2025-12-14T16:23:15.277722"
-    },
-    {
-      "symbol": "TAO",
-      "name": "Bittensor",
-      "price": 288.46,
-      "change24h": -2.84725,
-      "marketCap": 2766022878,
-      "predictionScore": 78.7,
-      "predictedChange7d": 6.7,
-      "predictedChange30d": 8.2,
-      "confidence": "medium",
-      "factors": [
-        "Price stability",
-        "Technical breakout pattern",
-        "Development milestones"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278608"
+      "timestamp": "2025-12-14T17:16:56.020038"
     },
     {
       "symbol": "BCH",
       "name": "Bitcoin Cash",
-      "price": 570.31,
-      "change24h": -1.48389,
-      "marketCap": 11381084331,
-      "predictionScore": 78.3,
-      "predictedChange7d": -0.8,
-      "predictedChange30d": 14.4,
+      "price": 568.7,
+      "change24h": -1.13747,
+      "marketCap": 11380010502,
+      "predictionScore": 78.6,
+      "predictedChange7d": -4.9,
+      "predictedChange30d": 2.6,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Technical breakout pattern",
+        "Strong community sentiment"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020927"
+    },
+    {
+      "symbol": "PAXG",
+      "name": "PAX Gold",
+      "price": 4322.74,
+      "change24h": 0.08739,
+      "marketCap": 1473665118,
+      "predictionScore": 77.7,
+      "predictedChange7d": -6.4,
+      "predictedChange30d": -10.3,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Strong community sentiment",
-        "Increasing adoption rate"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278642"
-    },
-    {
-      "symbol": "UNI",
-      "name": "Uniswap",
-      "price": 5.39,
-      "change24h": -1.56309,
-      "marketCap": 3385699395,
-      "predictionScore": 77.5,
-      "predictedChange7d": -2.5,
-      "predictedChange30d": 2.2,
-      "confidence": "medium",
-      "factors": [
-        "High volume ratio",
-        "Price stability",
         "Technical breakout pattern"
       ],
-      "timestamp": "2025-12-14T16:23:15.277313"
+      "timestamp": "2025-12-14T17:16:56.020597"
     }
   ],
   "all_predictions": [
     {
       "symbol": "NIGHT",
       "name": "Midnight",
-      "price": 0.067974,
-      "change24h": 38.31724,
-      "marketCap": 1143044010,
-      "predictionScore": 93.1,
-      "predictedChange7d": 33.6,
-      "predictedChange30d": 48.5,
+      "price": 0.069206,
+      "change24h": 39.00535,
+      "marketCap": 1152283174,
+      "predictionScore": 89.9,
+      "predictedChange7d": 22.8,
+      "predictedChange30d": 53.5,
       "confidence": "high",
       "factors": [
         "Strong momentum",
         "High volume ratio",
         "Increasing adoption rate"
       ],
-      "timestamp": "2025-12-14T16:23:15.276908"
+      "timestamp": "2025-12-14T17:16:56.019144"
     },
     {
-      "symbol": "ZEC",
-      "name": "Zcash",
-      "price": 405.89,
-      "change24h": -7.29688,
-      "marketCap": 6670722104,
-      "predictionScore": 79.2,
-      "predictedChange7d": 6.5,
-      "predictedChange30d": -1.8,
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "price": 13.42,
+      "change24h": -2.23808,
+      "marketCap": 9402181136,
+      "predictionScore": 79.9,
+      "predictedChange7d": 0.4,
+      "predictedChange30d": 10.5,
       "confidence": "medium",
       "factors": [
-        "High volume ratio",
         "Price stability",
-        "Positive network growth"
+        "Exchange listings upcoming",
+        "Technical breakout pattern"
       ],
-      "timestamp": "2025-12-14T16:23:15.276955"
+      "timestamp": "2025-12-14T17:16:56.020135"
     },
     {
-      "symbol": "AVAX",
-      "name": "Avalanche",
-      "price": 13.04,
-      "change24h": -2.52943,
-      "marketCap": 5590650076,
-      "predictionScore": 79.0,
-      "predictedChange7d": 3.6,
-      "predictedChange30d": 6.5,
+      "symbol": "CBBTC",
+      "name": "Coinbase Wrapped BTC",
+      "price": 88928,
+      "change24h": -1.25349,
+      "marketCap": 6451360638,
+      "predictionScore": 79.7,
+      "predictedChange7d": 6.6,
+      "predictedChange30d": 5.0,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Increasing adoption rate",
+        "Exchange listings upcoming"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020561"
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "price": 3080.81,
+      "change24h": -0.74398,
+      "marketCap": 373600670208,
+      "predictionScore": 79.1,
+      "predictedChange7d": 4.1,
+      "predictedChange30d": -0.8,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Increasing adoption rate",
         "Development milestones"
       ],
-      "timestamp": "2025-12-14T16:23:15.277722"
-    },
-    {
-      "symbol": "TAO",
-      "name": "Bittensor",
-      "price": 288.46,
-      "change24h": -2.84725,
-      "marketCap": 2766022878,
-      "predictionScore": 78.7,
-      "predictedChange7d": 6.7,
-      "predictedChange30d": 8.2,
-      "confidence": "medium",
-      "factors": [
-        "Price stability",
-        "Technical breakout pattern",
-        "Development milestones"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278608"
+      "timestamp": "2025-12-14T17:16:56.020038"
     },
     {
       "symbol": "BCH",
       "name": "Bitcoin Cash",
-      "price": 570.31,
-      "change24h": -1.48389,
-      "marketCap": 11381084331,
-      "predictionScore": 78.3,
-      "predictedChange7d": -0.8,
-      "predictedChange30d": 14.4,
+      "price": 568.7,
+      "change24h": -1.13747,
+      "marketCap": 11380010502,
+      "predictionScore": 78.6,
+      "predictedChange7d": -4.9,
+      "predictedChange30d": 2.6,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Technical breakout pattern",
+        "Strong community sentiment"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020927"
+    },
+    {
+      "symbol": "PAXG",
+      "name": "PAX Gold",
+      "price": 4322.74,
+      "change24h": 0.08739,
+      "marketCap": 1473665118,
+      "predictionScore": 77.7,
+      "predictedChange7d": -6.4,
+      "predictedChange30d": -10.3,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Strong community sentiment",
-        "Increasing adoption rate"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278642"
-    },
-    {
-      "symbol": "UNI",
-      "name": "Uniswap",
-      "price": 5.39,
-      "change24h": -1.56309,
-      "marketCap": 3385699395,
-      "predictionScore": 77.5,
-      "predictedChange7d": -2.5,
-      "predictedChange30d": 2.2,
-      "confidence": "medium",
-      "factors": [
-        "High volume ratio",
-        "Price stability",
         "Technical breakout pattern"
       ],
-      "timestamp": "2025-12-14T16:23:15.277313"
+      "timestamp": "2025-12-14T17:16:56.020597"
     },
     {
-      "symbol": "BSC-USD",
-      "name": "Binance Bridged USDT (BNB Smart Chain)",
-      "price": 1.001,
-      "change24h": 0.04028,
-      "marketCap": 8989394763,
+      "symbol": "SUI",
+      "name": "Sui",
+      "price": 1.57,
+      "change24h": -1.93337,
+      "marketCap": 5916374748,
       "predictionScore": 77.5,
-      "predictedChange7d": -3.1,
-      "predictedChange30d": -10.2,
+      "predictedChange7d": -4.6,
+      "predictedChange30d": -5.5,
       "confidence": "medium",
       "factors": [
         "High volume ratio",
         "Price stability",
-        "Increasing adoption rate"
+        "Positive network growth"
       ],
-      "timestamp": "2025-12-14T16:23:15.277426"
+      "timestamp": "2025-12-14T17:16:56.019568"
     },
     {
-      "symbol": "APT",
-      "name": "Aptos",
-      "price": 1.64,
-      "change24h": -2.99541,
-      "marketCap": 1226133615,
-      "predictionScore": 76.5,
-      "predictedChange7d": 0.9,
-      "predictedChange30d": 4.9,
-      "confidence": "medium",
-      "factors": [
-        "High volume ratio",
-        "Price stability",
-        "Development milestones"
-      ],
-      "timestamp": "2025-12-14T16:23:15.277166"
-    },
-    {
-      "symbol": "WETH",
-      "name": "Binance-Peg WETH",
-      "price": 3088.81,
-      "change24h": -0.6539,
-      "marketCap": 1863333567,
-      "predictionScore": 76.4,
-      "predictedChange7d": 7.1,
-      "predictedChange30d": 13.5,
-      "confidence": "medium",
-      "factors": [
-        "Price stability",
-        "Development milestones",
-        "Exchange listings upcoming"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278852"
-    },
-    {
-      "symbol": "BTC",
-      "name": "Bitcoin",
-      "price": 89128,
-      "change24h": -1.06461,
-      "marketCap": 1778053481416,
-      "predictionScore": 76.2,
-      "predictedChange7d": -1.0,
-      "predictedChange30d": 9.5,
+      "symbol": "AVAX",
+      "name": "Avalanche",
+      "price": 12.99,
+      "change24h": -2.72741,
+      "marketCap": 5596355943,
+      "predictionScore": 77.1,
+      "predictedChange7d": -0.5,
+      "predictedChange30d": -5.6,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Positive network growth",
-        "Development milestones"
+        "Technical breakout pattern"
       ],
-      "timestamp": "2025-12-14T16:23:15.278428"
+      "timestamp": "2025-12-14T17:16:56.019955"
     },
     {
-      "symbol": "XAUT",
-      "name": "Tether Gold",
-      "price": 4314.24,
-      "change24h": 0.51328,
-      "marketCap": 2242988417,
-      "predictionScore": 76.0,
-      "predictedChange7d": -2.6,
-      "predictedChange30d": 3.4,
+      "symbol": "AAVE",
+      "name": "Aave",
+      "price": 191.59,
+      "change24h": -2.66204,
+      "marketCap": 2918594184,
+      "predictionScore": 76.7,
+      "predictedChange7d": 7.2,
+      "predictedChange30d": -2.7,
       "confidence": "medium",
       "factors": [
         "High volume ratio",
         "Price stability",
-        "Technical breakout pattern"
+        "Increasing adoption rate"
       ],
-      "timestamp": "2025-12-14T16:23:15.277392"
+      "timestamp": "2025-12-14T17:16:56.019542"
     },
     {
-      "symbol": "CBBTC",
-      "name": "Coinbase Wrapped BTC",
-      "price": 89022,
-      "change24h": -1.20724,
-      "marketCap": 6452644425,
+      "symbol": "ATOM",
+      "name": "Cosmos Hub",
+      "price": 2.12,
+      "change24h": -2.61262,
+      "marketCap": 1028515991,
+      "predictionScore": 76.6,
+      "predictedChange7d": -3.4,
+      "predictedChange30d": -3.7,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Strong community sentiment",
+        "Positive network growth"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020525"
+    },
+    {
+      "symbol": "ICP",
+      "name": "Internet Computer",
+      "price": 3.16,
+      "change24h": -3.8177,
+      "marketCap": 1721746518,
       "predictionScore": 75.8,
-      "predictedChange7d": -1.0,
-      "predictedChange30d": -0.6,
+      "predictedChange7d": 3.2,
+      "predictedChange30d": -1.6,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Technical breakout pattern",
         "Strong community sentiment"
       ],
-      "timestamp": "2025-12-14T16:23:15.278359"
+      "timestamp": "2025-12-14T17:16:56.020632"
     },
     {
-      "symbol": "ETC",
-      "name": "Ethereum Classic",
-      "price": 12.86,
-      "change24h": -2.55735,
-      "marketCap": 1986880950,
-      "predictionScore": 75.5,
-      "predictedChange7d": -2.7,
-      "predictedChange30d": -5.8,
-      "confidence": "medium",
-      "factors": [
-        "Price stability",
-        "Development milestones",
-        "Exchange listings upcoming"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278885"
-    },
-    {
-      "symbol": "LINK",
-      "name": "Chainlink",
-      "price": 13.49,
-      "change24h": -2.25911,
-      "marketCap": 9393665970,
-      "predictionScore": 75.4,
-      "predictedChange7d": 7.0,
-      "predictedChange30d": 14.2,
+      "symbol": "SOL",
+      "name": "Solana",
+      "price": 130.36,
+      "change24h": -1.75962,
+      "marketCap": 73613957967,
+      "predictionScore": 75.7,
+      "predictedChange7d": -1.0,
+      "predictedChange30d": 8.9,
       "confidence": "medium",
       "factors": [
         "Price stability",
         "Strong community sentiment",
-        "Increasing adoption rate"
+        "Positive network growth"
       ],
-      "timestamp": "2025-12-14T16:23:15.277877"
+      "timestamp": "2025-12-14T17:16:56.020098"
     },
     {
-      "symbol": "SOL",
-      "name": "Wrapped SOL",
-      "price": 130.9,
-      "change24h": -1.76842,
-      "marketCap": 1627174439,
-      "predictionScore": 75.2,
-      "predictedChange7d": 0.3,
-      "predictedChange30d": 9.4,
+      "symbol": "DOT",
+      "name": "Polkadot",
+      "price": 1.97,
+      "change24h": -3.44265,
+      "marketCap": 3256392074,
+      "predictionScore": 75.5,
+      "predictedChange7d": 2.0,
+      "predictedChange30d": 13.2,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Exchange listings upcoming",
+        "Increasing adoption rate"
+      ],
+      "timestamp": "2025-12-14T17:16:56.019921"
+    },
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "price": 88660,
+      "change24h": -1.55472,
+      "marketCap": 1775817087863,
+      "predictionScore": 75.5,
+      "predictedChange7d": 1.4,
+      "predictedChange30d": 2.0,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Exchange listings upcoming",
+        "Increasing adoption rate"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020667"
+    },
+    {
+      "symbol": "TON",
+      "name": "Toncoin",
+      "price": 1.57,
+      "change24h": -2.40924,
+      "marketCap": 3860677600,
+      "predictionScore": 75.5,
+      "predictedChange7d": 5.2,
+      "predictedChange30d": 3.2,
+      "confidence": "medium",
+      "factors": [
+        "Price stability",
+        "Increasing adoption rate",
+        "Exchange listings upcoming"
+      ],
+      "timestamp": "2025-12-14T17:16:56.020871"
+    },
+    {
+      "symbol": "ENA",
+      "name": "Ethena",
+      "price": 0.236213,
+      "change24h": -4.41196,
+      "marketCap": 1829470961,
+      "predictionScore": 75.0,
+      "predictedChange7d": -3.1,
+      "predictedChange30d": 12.2,
       "confidence": "medium",
       "factors": [
         "High volume ratio",
-        "Price stability",
-        "Strong community sentiment"
+        "Technical breakout pattern",
+        "Exchange listings upcoming"
       ],
-      "timestamp": "2025-12-14T16:23:15.277288"
+      "timestamp": "2025-12-14T17:16:56.019236"
     },
     {
       "symbol": "WLFI",
       "name": "World Liberty Financial",
-      "price": 0.138364,
-      "change24h": -4.2026,
-      "marketCap": 3776556274,
-      "predictionScore": 75.0,
-      "predictedChange7d": -1.4,
-      "predictedChange30d": 6.8,
+      "price": 0.138513,
+      "change24h": -4.35074,
+      "marketCap": 3784238032,
+      "predictionScore": 74.9,
+      "predictedChange7d": 1.4,
+      "predictedChange30d": 14.3,
       "confidence": "medium",
       "factors": [
         "Exchange listings upcoming",
-        "Strong community sentiment",
+        "Positive network growth",
         "Increasing adoption rate"
       ],
-      "timestamp": "2025-12-14T16:23:15.278572"
+      "timestamp": "2025-12-14T17:16:56.020753"
     },
     {
-      "symbol": "ARB",
-      "name": "Arbitrum",
-      "price": 0.207865,
-      "change24h": -2.05646,
-      "marketCap": 1164161724,
-      "predictionScore": 74.4,
-      "predictedChange7d": 2.7,
-      "predictedChange30d": -0.2,
+      "symbol": "MNT",
+      "name": "Mantle",
+      "price": 1.29,
+      "change24h": 1.63619,
+      "marketCap": 4202360050,
+      "predictionScore": 74.8,
+      "predictedChange7d": 5.3,
+      "predictedChange30d": 4.3,
       "confidence": "medium",
       "factors": [
-        "High volume ratio",
-        "Technical breakout pattern",
-        "Development milestones"
+        "Price stability",
+        "Positive network growth",
+        "Increasing adoption rate"
       ],
-      "timestamp": "2025-12-14T16:23:15.277237"
+      "timestamp": "2025-12-14T17:16:56.020172"
     },
     {
-      "symbol": "WBNB",
-      "name": "Wrapped BNB",
-      "price": 886.27,
-      "change24h": -1.82946,
-      "marketCap": 1179621738,
-      "predictionScore": 74.3,
-      "predictedChange7d": 9.0,
-      "predictedChange30d": -1.6,
+      "symbol": "XAUT",
+      "name": "Tether Gold",
+      "price": 4314.86,
+      "change24h": 0.53744,
+      "marketCap": 2243490495,
+      "predictionScore": 74.5,
+      "predictedChange7d": 1.4,
+      "predictedChange30d": 1.4,
       "confidence": "medium",
       "factors": [
         "High volume ratio",
         "Price stability",
-        "Strong community sentiment"
+        "Development milestones"
       ],
-      "timestamp": "2025-12-14T16:23:15.277263"
+      "timestamp": "2025-12-14T17:16:56.019702"
     },
     {
-      "symbol": "USDT",
-      "name": "Tether",
-      "price": 1.0,
-      "change24h": 0.00821,
-      "marketCap": 186274250373,
-      "predictionScore": 74.1,
-      "predictedChange7d": -4.2,
-      "predictedChange30d": -6.7,
+      "symbol": "USDC",
+      "name": "USDC",
+      "price": 0.999769,
+      "change24h": -0.01048,
+      "marketCap": 78415374129,
+      "predictionScore": 74.5,
+      "predictedChange7d": 3.3,
+      "predictedChange30d": 13.8,
       "confidence": "medium",
       "factors": [
         "High volume ratio",
-        "Development milestones",
-        "Exchange listings upcoming"
+        "Technical breakout pattern",
+        "Positive network growth"
       ],
-      "timestamp": "2025-12-14T16:23:15.277498"
-    },
-    {
-      "symbol": "TRX",
-      "name": "TRON",
-      "price": 0.276135,
-      "change24h": 1.44383,
-      "marketCap": 26145315963,
-      "predictionScore": 74.1,
-      "predictedChange7d": -3.8,
-      "predictedChange30d": 9.4,
-      "confidence": "medium",
-      "factors": [
-        "Strong community sentiment",
-        "Development milestones",
-        "Exchange listings upcoming"
-      ],
-      "timestamp": "2025-12-14T16:23:15.278818"
+      "timestamp": "2025-12-14T17:16:56.019809"
     }
   ],
   "prediction_metrics": {
-    "average_7d_prediction": 5.1,
-    "average_30d_prediction": 9.6,
+    "average_7d_prediction": 2.1,
+    "average_30d_prediction": 4.3,
     "high_confidence_count": 1,
     "total_predicted": 50
   }
