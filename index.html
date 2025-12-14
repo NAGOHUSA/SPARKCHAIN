@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPARKCHAIN - Crypto Investment Analytics</title>
+    <title>SPARKCHAIN PRO - Advanced Crypto Analytics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,6 +18,9 @@
             --danger-color: #e74c3c;
             --info-color: #6c5ce7;
             --prediction-color: #9c27b0;
+            --defi-color: #00bcd4;
+            --nft-color: #ff4081;
+            --institutional-color: #4caf50;
         }
         
         body {
@@ -51,17 +54,12 @@
             border-color: var(--accent-color);
         }
         
-        .price-up {
-            color: var(--success-color);
-        }
-        
-        .price-down {
-            color: var(--danger-color);
-        }
-        
-        .prediction-up {
-            color: var(--prediction-color);
-        }
+        .price-up { color: var(--success-color); }
+        .price-down { color: var(--danger-color); }
+        .prediction-up { color: var(--prediction-color); }
+        .defi-up { color: var(--defi-color); }
+        .nft-up { color: var(--nft-color); }
+        .institutional-up { color: var(--institutional-color); }
         
         .data-refresh-btn {
             background: linear-gradient(135deg, var(--accent-color) 0%, #008b94 100%);
@@ -78,65 +76,35 @@
             box-shadow: 0 5px 15px rgba(0, 173, 181, 0.4);
         }
         
-        .parameter-control {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            border-left: 5px solid var(--accent-color);
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 15px;
             border: 1px solid #2d3746;
         }
         
-        .crypto-card {
+        .crypto-card, .prediction-card, .defi-card, .nft-card, .institutional-card {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 10px;
-            border-left: 4px solid var(--info-color);
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             border: 1px solid #2d3746;
+            transition: all 0.3s ease;
         }
         
-        .prediction-card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #2d1a2e 100%);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--prediction-color);
-            box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
-            border: 1px solid #4a2d4a;
-        }
+        .prediction-card { border-left: 4px solid var(--prediction-color); }
+        .defi-card { border-left: 4px solid var(--defi-color); }
+        .nft-card { border-left: 4px solid var(--nft-color); }
+        .institutional-card { border-left: 4px solid var(--institutional-color); }
+        .crypto-card { border-left: 4px solid var(--info-color); }
         
-        .prediction-card:hover {
+        .crypto-card:hover, .prediction-card:hover, .defi-card:hover, .nft-card:hover, .institutional-card:hover {
             transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.4);
-            border-color: var(--prediction-color);
-        }
-        
-        .crypto-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0, 173, 181, 0.2);
             border-color: var(--accent-color);
-        }
-        
-        .ai-insight {
-            background: linear-gradient(135deg, #6c5ce7 0%, #5b4fcf 100%);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 0.9rem;
-            border-left: 4px solid var(--warning-color);
-        }
-        
-        .prediction-badge {
-            background: linear-gradient(135deg, var(--prediction-color) 0%, #7b1fa2 100%);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
         }
         
         .disclaimer-banner {
@@ -150,16 +118,6 @@
             border: 1px solid #ff6b6b;
         }
         
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-            background: #1a1a2e;
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #2d3746;
-        }
-        
         .brand-logo {
             font-weight: 700;
             font-size: 1.8rem;
@@ -168,29 +126,6 @@
             background: linear-gradient(135deg, var(--accent-color) 0%, var(--info-color) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-        
-        .dashboard-loading .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #2d3746;
-            border-top: 5px solid var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .data-source-badge {
-            background: linear-gradient(135deg, var(--info-color) 0%, #5b4fcf 100%);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
         }
         
         .table-dark-custom {
@@ -212,31 +147,17 @@
             background-color: rgba(0, 173, 181, 0.1);
         }
         
-        .form-select-dark {
-            background-color: #1a1a2e;
-            border: 1px solid #2d3746;
-            color: #c9d1d9;
-        }
+        .btn-outline-spark { color: var(--accent-color); border-color: var(--accent-color); }
+        .btn-outline-spark:hover { background-color: var(--accent-color); color: white; }
         
-        .btn-outline-spark {
-            color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
+        .btn-outline-predict { color: var(--prediction-color); border-color: var(--prediction-color); }
+        .btn-outline-predict:hover { background-color: var(--prediction-color); color: white; }
         
-        .btn-outline-spark:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
+        .btn-outline-defi { color: var(--defi-color); border-color: var(--defi-color); }
+        .btn-outline-defi:hover { background-color: var(--defi-color); color: white; }
         
-        .btn-outline-predict {
-            color: var(--prediction-color);
-            border-color: var(--prediction-color);
-        }
-        
-        .btn-outline-predict:hover {
-            background-color: var(--prediction-color);
-            color: white;
-        }
+        .btn-outline-nft { color: var(--nft-color); border-color: var(--nft-color); }
+        .btn-outline-nft:hover { background-color: var(--nft-color); color: white; }
         
         .icon-circle {
             background: linear-gradient(135deg, rgba(0, 173, 181, 0.2) 0%, rgba(0, 139, 148, 0.2) 100%);
@@ -248,327 +169,676 @@
             justify-content: center;
         }
         
-        .prediction-meter {
+        /* Sentiment Gauge */
+        .sentiment-gauge {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sentiment-pointer {
+            position: absolute;
+            top: -5px;
+            width: 2px;
+            height: 30px;
+            background: white;
+            transform: translateX(-50%);
+        }
+        
+        /* Alert Badges */
+        .alert-badge {
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Tab Navigation */
+        .nav-tabs-custom {
+            border-bottom: 1px solid #2d3746;
+        }
+        
+        .nav-tabs-custom .nav-link {
+            color: #c9d1d9;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-bottom: -1px;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+            background-color: #1a1a2e;
+            border-color: #2d3746 #2d3746 #1a1a2e;
+            color: var(--accent-color);
+        }
+        
+        /* Progress Bars */
+        .progress-custom {
+            background-color: #2d3746;
             height: 8px;
-            background: #2d3746;
             border-radius: 4px;
             overflow: hidden;
-            margin-top: 5px;
         }
         
-        .prediction-meter-fill {
-            height: 100%;
+        .progress-bar-custom {
             background: linear-gradient(90deg, #4caf50, #8bc34a, #ffeb3b, #ff9800, #f44336);
-            transition: width 0.5s ease;
+            height: 100%;
         }
         
-        .confidence-high {
-            color: #4caf50;
+        /* Loading States */
+        .skeleton-loader {
+            background: linear-gradient(90deg, #2d3746 25%, #3a4553 50%, #2d3746 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
         }
         
-        .confidence-medium {
-            color: #ff9800;
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
         
-        .confidence-low {
-            color: #f44336;
+        /* Tooltip Custom */
+        .custom-tooltip {
+            position: absolute;
+            background: #1a1a2e;
+            border: 1px solid #2d3746;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 300px;
+            display: none;
         }
         
-        .prediction-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1rem 0;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
         }
-        
-        .dot-high { background-color: #4caf50; }
-        .dot-medium { background-color: #ff9800; }
-        .dot-low { background-color: #f44336; }
     </style>
 </head>
 <body>
+    <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <a href="#" class="brand-logo">
-                        <i class="fas fa-bolt"></i> SPARKCHAIN
+                        <i class="fas fa-bolt"></i> SPARKCHAIN PRO
                     </a>
-                    <h2 class="mt-2 mb-1 text-light">Crypto Investment Analytics Dashboard</h2>
-                    <p class="text-light opacity-75 mb-0">Real-time trending crypto detection & AI-powered predictions</p>
+                    <h2 class="mt-2 mb-1 text-light">Advanced Crypto Analytics Platform</h2>
+                    <p class="text-light opacity-75 mb-0">AI-powered insights, predictions, and institutional-grade tools</p>
                 </div>
                 <div class="col-md-6 text-end">
                     <div class="d-flex flex-wrap justify-content-end gap-2 align-items-center">
-                        <button class="btn data-refresh-btn" onclick="loadData()" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i> Refresh
+                        <button class="btn data-refresh-btn" onclick="loadAllData()" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh All
                         </button>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog"></i> Settings
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="#" onclick="configureAlerts()"><i class="fas fa-bell"></i> Alert Settings</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportAllData()"><i class="fas fa-download"></i> Export All Data</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="showApiDocs()"><i class="fas fa-code"></i> API Documentation</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- DISCLAIMER BANNER -->
+    <!-- Disclaimer Banner -->
     <div class="container">
         <div class="disclaimer-banner">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            <strong>DISCLAIMER:</strong> This dashboard provides analytics and insights for informational purposes only. 
-            Predictive analysis is based on historical patterns and AI algorithms - NOT financial advice. 
-            Cryptocurrency investments are highly volatile and risky. Always do your own research.
+            <strong>PROFESSIONAL TOOL DISCLAIMER:</strong> Advanced analytics for institutional research only. 
+            Not financial advice. Crypto investments are highly volatile. Use at your own risk.
             <i class="fas fa-exclamation-triangle ms-2"></i>
         </div>
     </div>
 
     <div class="container">
-        <!-- Data Status -->
+        <!-- Status Bar -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="alert alert-dark d-flex justify-content-between align-items-center" id="statusAlert">
                     <div>
-                        <span class="data-source-badge me-2" id="dataSourceBadge">
-                            <i class="fas fa-database"></i> <span>Live Data</span>
+                        <span class="badge bg-success me-2">PRO MODE</span>
+                        <span id="statusMessage">Loading advanced analytics...</span>
+                        <span class="ms-3" id="activeAlerts"></span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-info" id="lastUpdated">
+                            <i class="fas fa-clock"></i> <span>Loading...</span>
                         </span>
-                        <span id="statusMessage">Loading crypto market data...</span>
-                    </div>
-                    <div>
-                        <span class="badge bg-secondary" id="dataAge">
-                            <i class="fas fa-clock"></i> <span id="lastUpdated">Just now</span>
-                        </span>
+                        <button class="btn btn-sm btn-outline-light" onclick="toggleAutoRefresh()" id="autoRefreshBtn">
+                            <i class="fas fa-redo"></i> Auto: ON
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Stats -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6">
-                <div class="stat-card text-center">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="text-muted mb-1">Total Coins Tracked</h6>
-                            <h2 id="totalCoins" class="mb-0 text-light">0</h2>
-                        </div>
-                        <div class="icon-circle">
-                            <i class="fas fa-coins text-info" style="font-size: 1.5rem;"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> <span id="newCoins">0</span> new today</small>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-md-6">
-                <div class="stat-card text-center">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="text-muted mb-1">Trending Coins</h6>
-                            <h2 id="trendingCoins" class="mb-0 text-light">0</h2>
-                        </div>
-                        <div class="icon-circle">
-                            <i class="fas fa-fire text-success" style="font-size: 1.5rem;"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <small class="text-success"><i class="fas fa-chart-line"></i> <span id="trendingChange">0%</span> 24h growth</small>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-md-6">
-                <div class="stat-card text-center">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="text-muted mb-1">Total Market Cap</h6>
-                            <h2 id="totalMarketCap" class="mb-0 text-light">$0</h2>
-                        </div>
-                        <div class="icon-circle">
-                            <i class="fas fa-chart-bar text-primary" style="font-size: 1.5rem;"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> <span id="marketCapChange">0%</span> today</small>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-md-6">
-                <div class="stat-card text-center">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="text-muted mb-1">Prediction Confidence</h6>
-                            <h2 id="predictionConfidence" class="mb-0 text-light">0%</h2>
-                        </div>
-                        <div class="icon-circle" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.2) 0%, rgba(123, 31, 162, 0.2) 100%);">
-                            <i class="fas fa-crystal-ball text-purple" style="font-size: 1.5rem; color: #9c27b0;"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <small class="prediction-up"><i class="fas fa-chart-line"></i> <span id="highPotential">0</span> high-potential coins</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs nav-tabs-custom mb-4" id="dashboardTabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab-overview">
+                    <i class="fas fa-chart-line me-2"></i> Overview
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-predictions">
+                    <i class="fas fa-crystal-ball me-2"></i> AI Predictions
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-defi">
+                    <i class="fas fa-university me-2"></i> DeFi Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-institutional">
+                    <i class="fas fa-chart-bar me-2"></i> Institutional
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-alerts">
+                    <i class="fas fa-bell me-2"></i> Alerts
+                    <span class="badge bg-danger alert-badge" id="alertsCount" style="display: none;">0</span>
+                </a>
+            </li>
+        </ul>
 
-        <!-- Charts -->
-        <div class="row mb-4">
-            <div class="col-lg-8">
-                <div class="stat-card">
-                    <h5><i class="fas fa-chart-line text-primary"></i> Top Trending Coins (24h)</h5>
-                    <div class="chart-container">
-                        <canvas id="trendingChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="stat-card">
-                    <h5><i class="fas fa-chart-pie text-info"></i> Market Cap Distribution</h5>
-                    <div class="chart-container">
-                        <canvas id="marketCapChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Top Trending Coins -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0"><i class="fas fa-fire text-warning"></i> Top Trending Cryptocurrencies</h5>
-                        <div>
-                            <button class="btn btn-sm btn-outline-spark me-2" onclick="exportCoinsData()">
-                                <i class="fas fa-download"></i> Export Data
-                            </button>
-                            <span class="badge bg-warning text-dark" id="trendingCount">0 coins</span>
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Tab 1: Overview -->
+            <div class="tab-pane fade show active" id="tab-overview">
+                <!-- Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">Market Cap</h6>
+                            <h3 id="marketCapStat" class="mb-0 text-light">$0</h3>
+                            <small class="text-success" id="marketCapChange">0%</small>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-dark-custom table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Coin</th>
-                                    <th>Price</th>
-                                    <th>24h Change</th>
-                                    <th>Market Cap</th>
-                                    <th>Volume (24h)</th>
-                                    <th>Spark Score</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="trendingTableBody">
-                                <tr>
-                                    <td colspan="8" class="text-center py-4">
-                                        <div class="spinner-border text-warning"></div>
-                                        <p class="mt-2">Loading trending coins...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- NEW: Predictive Trends Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0"><i class="fas fa-crystal-ball text-purple" style="color: #9c27b0;"></i> Predictive Trends & Future Analysis</h5>
-                        <div>
-                            <button class="btn btn-sm btn-outline-predict me-2" onclick="runPredictiveAnalysis()">
-                                <i class="fas fa-robot"></i> Generate Predictions
-                            </button>
-                            <span class="prediction-badge"><i class="fas fa-chart-line"></i> AI-Powered</span>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">Fear & Greed</h6>
+                            <h3 id="fearGreedStat" class="mb-0 text-warning">50</h3>
+                            <small id="sentimentLabel">Neutral</small>
                         </div>
                     </div>
-                    
-                    <!-- Prediction Metrics -->
-                    <div class="row mb-4">
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3" style="border-right: 1px solid #2d3746;">
-                                <div class="small text-muted mb-1">Short-term (7d)</div>
-                                <div class="prediction-up fw-bold" id="shortTermPrediction">+5.2%</div>
-                                <div class="small">
-                                    <span class="prediction-dot dot-high"></span>
-                                    <span class="confidence-high">High Confidence</span>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">DeFi TVL</h6>
+                            <h3 id="defiTVL" class="mb-0 text-info">$0B</h3>
+                            <small class="text-success">+0%</small>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">Active Alerts</h6>
+                            <h3 id="activeAlertsCount" class="mb-0 text-danger">0</h3>
+                            <small><a href="#" onclick="showTab('alerts')">View All</a></small>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">Whale Activity</h6>
+                            <h3 id="whaleActivity" class="mb-0 text-primary">0</h3>
+                            <small class="text-muted">24h moves</small>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">AI Confidence</h6>
+                            <h3 id="aiConfidence" class="mb-0 prediction-up">85%</h3>
+                            <small class="text-muted">Predictions</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row mb-4">
+                    <div class="col-lg-8">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-chart-line text-primary"></i> Market Overview</h5>
+                            <div class="chart-container">
+                                <canvas id="marketOverviewChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-brain text-warning"></i> Market Sentiment</h5>
+                            <div class="chart-container">
+                                <canvas id="sentimentChart"></canvas>
+                            </div>
+                            <div class="mt-3">
+                                <div class="sentiment-gauge">
+                                    <div class="sentiment-pointer" id="sentimentPointer" style="left: 50%;"></div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3" style="border-right: 1px solid #2d3746;">
-                                <div class="small text-muted mb-1">Mid-term (30d)</div>
-                                <div class="prediction-up fw-bold" id="midTermPrediction">+12.8%</div>
-                                <div class="small">
-                                    <span class="prediction-dot dot-medium"></span>
-                                    <span class="confidence-medium">Medium Confidence</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3" style="border-right: 1px solid #2d3746;">
-                                <div class="small text-muted mb-1">High-Potential Coins</div>
-                                <div class="fw-bold text-light" id="highPotentialCount">5</div>
-                                <div class="small text-muted">Identified this week</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3">
-                                <div class="small text-muted mb-1">Risk Level</div>
-                                <div class="fw-bold text-warning" id="riskLevel">Medium</div>
-                                <div class="prediction-meter">
-                                    <div class="prediction-meter-fill" id="riskMeter" style="width: 60%;"></div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span class="text-danger">Fear</span>
+                                    <span class="text-warning">Neutral</span>
+                                    <span class="text-success">Greed</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Prediction Cards -->
-                    <div class="row" id="predictionsContainer">
-                        <div class="col-12 text-center py-4">
-                            <div class="spinner-border text-purple" style="color: #9c27b0;"></div>
-                            <p class="mt-2 text-muted">Analyzing future trends...</p>
+                </div>
+
+                <!-- Top Coins Table -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0"><i class="fas fa-coins text-warning"></i> Top Cryptocurrencies</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-spark me-2" onclick="exportTableData()">
+                                        <i class="fas fa-download"></i> Export
+                                    </button>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-secondary active" onclick="sortBy('marketCap')">Market Cap</button>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="sortBy('volume')">Volume</button>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="sortBy('change')">24h %</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-dark-custom table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Coin</th>
+                                            <th>Price</th>
+                                            <th>24h Change</th>
+                                            <th>Market Cap</th>
+                                            <th>Volume (24h)</th>
+                                            <th>Spark Score</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="topCoinsTable">
+                                        <!-- Filled by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Prediction Factors -->
-                    <div class="mt-4">
-                        <h6 class="text-muted mb-3"><i class="fas fa-list-check"></i> Key Prediction Factors</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <ul class="list-unstyled small">
-                                    <li class="mb-2">
-                                        <i class="fas fa-circle-check text-success me-2"></i>
-                                        <strong>Volume Momentum:</strong> Increasing trading volume
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-circle-check text-success me-2"></i>
-                                        <strong>Price Patterns:</strong> Breakout formations
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-circle-check text-success me-2"></i>
-                                        <strong>Market Sentiment:</strong> Positive social indicators
-                                    </li>
-                                </ul>
+                </div>
+            </div>
+
+            <!-- Tab 2: AI Predictions -->
+            <div class="tab-pane fade" id="tab-predictions">
+                <!-- Prediction Metrics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">7-Day Forecast</h6>
+                            <h3 class="prediction-up mb-1" id="prediction7d">+5.2%</h3>
+                            <div class="progress-custom mt-2">
+                                <div class="progress-bar-custom" style="width: 70%;"></div>
                             </div>
-                            <div class="col-md-6">
-                                <ul class="list-unstyled small">
-                                    <li class="mb-2">
-                                        <i class="fas fa-circle-exclamation text-warning me-2"></i>
-                                        <strong>On-chain Activity:</strong> Network growth
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-circle-exclamation text-warning me-2"></i>
-                                        <strong>Development Activity:</strong> GitHub commits
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-circle-exclamation text-warning me-2"></i>
-                                        <strong>Whale Movements:</strong> Large wallet activity
-                                    </li>
-                                </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">30-Day Forecast</h6>
+                            <h3 class="prediction-up mb-1" id="prediction30d">+15.8%</h3>
+                            <div class="progress-custom mt-2">
+                                <div class="progress-bar-custom" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">AI Confidence</h6>
+                            <h3 class="mb-1" id="aiPredictionConfidence">87%</h3>
+                            <div class="small text-muted">Based on 15+ factors</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <h6 class="text-muted mb-1">Top Predicted</h6>
+                            <h3 class="mb-1" id="topPredictedCoin">SOL</h3>
+                            <div class="small prediction-up">+22% expected</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Predictions Grid -->
+                <div class="row mb-4" id="aiPredictionsGrid">
+                    <!-- Filled by JavaScript -->
+                </div>
+
+                <!-- Prediction Factors -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-list-check prediction-up"></i> AI Prediction Factors</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Price Momentum</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Volume Growth</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Social Sentiment</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> On-chain Activity</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Development Metrics</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Market Structure</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Whale Movements</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Exchange Flows</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Macro Indicators</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: DeFi Analytics -->
+            <div class="tab-pane fade" id="tab-defi">
+                <!-- DeFi Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h6 class="text-muted mb-2">Total Value Locked</h6>
+                            <h2 class="defi-up mb-0" id="totalTVL">$0B</h2>
+                            <div class="small text-success mt-2">+0% 24h change</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h6 class="text-muted mb-2">Top Protocol</h6>
+                            <h4 class="mb-1" id="topProtocol">Loading...</h4>
+                            <div class="small defi-up" id="protocolTVL">$0B TVL</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h6 class="text-muted mb-2">Best Yield (APY)</h6>
+                            <h2 class="defi-up mb-0" id="bestYield">0%</h2>
+                            <div class="small text-muted" id="yieldProtocol">On Loading...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DeFi Protocols -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-university defi-up"></i> Top DeFi Protocols</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Protocol</th>
+                                            <th>Category</th>
+                                            <th>TVL</th>
+                                            <th>24h Change</th>
+                                            <th>Token</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="defiProtocolsTable">
+                                        <!-- Filled by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yield Opportunities -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-percentage defi-up"></i> Yield Opportunities</h5>
+                            <div class="row" id="yieldOpportunities">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Institutional Tools -->
+            <div class="tab-pane fade" id="tab-institutional">
+                <!-- Portfolio Simulator -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0"><i class="fas fa-robot institutional-up"></i> AI Portfolio Optimizer</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-institutional me-2" onclick="optimizePortfolio()">
+                                        <i class="fas fa-magic"></i> Optimize
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportPortfolio()">
+                                        <i class="fas fa-download"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Portfolio Controls -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Investment</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control form-control-dark" id="portfolioAmount" value="10000">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Risk Profile</label>
+                                    <select class="form-select form-select-dark" id="riskProfile">
+                                        <option value="conservative">Conservative</option>
+                                        <option value="balanced" selected>Balanced</option>
+                                        <option value="aggressive">Aggressive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Time Horizon</label>
+                                    <select class="form-select form-select-dark" id="portfolioHorizon">
+                                        <option value="30">30 Days</option>
+                                        <option value="90" selected>90 Days</option>
+                                        <option value="180">180 Days</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Max Assets</label>
+                                    <select class="form-select form-select-dark" id="maxAssets">
+                                        <option value="5">5 Assets</option>
+                                        <option value="10" selected>10 Assets</option>
+                                        <option value="15">15 Assets</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Portfolio Results -->
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="chart-container">
+                                        <canvas id="portfolioChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="p-3">
+                                        <h6 class="text-muted mb-3">Portfolio Metrics</h6>
+                                        <div class="mb-3">
+                                            <div class="small text-muted">Expected Return</div>
+                                            <div class="fw-bold text-success" id="expectedReturn">+0%</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="small text-muted">Risk Score</div>
+                                            <div class="fw-bold text-warning" id="portfolioRisk">0/10</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="small text-muted">Sharpe Ratio</div>
+                                            <div class="fw-bold text-info" id="sharpeRatio">0.00</div>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">Diversification</div>
+                                            <div class="fw-bold text-primary" id="diversificationScore">0%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Portfolio Allocation -->
+                            <div class="mt-4">
+                                <h6 class="text-muted mb-3">Optimized Allocation</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-dark-custom table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Asset</th>
+                                                <th>Allocation</th>
+                                                <th>Amount</th>
+                                                <th>Expected Return</th>
+                                                <th>Risk</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="portfolioAllocation">
+                                            <!-- Filled by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Whale Tracker -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-whale institutional-up"></i> Whale & Smart Money Tracker</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th>Activity</th>
+                                            <th>Amount</th>
+                                            <th>Direction</th>
+                                            <th>Significance</th>
+                                            <th>Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="whaleTrackerTable">
+                                        <!-- Filled by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arbitrage Opportunities -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <h5><i class="fas fa-exchange-alt institutional-up"></i> Arbitrage Opportunities</h5>
+                            <div class="row" id="arbitrageOpportunities">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Alerts -->
+            <div class="tab-pane fade" id="tab-alerts">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0"><i class="fas fa-bell text-warning"></i> Alert Management</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-warning me-2" onclick="createNewAlert()">
+                                        <i class="fas fa-plus"></i> New Alert
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="clearAllAlerts()">
+                                        <i class="fas fa-trash"></i> Clear All
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Alert Configuration -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Asset</label>
+                                    <select class="form-select form-select-dark" id="alertAsset">
+                                        <option value="BTC">Bitcoin (BTC)</option>
+                                        <option value="ETH">Ethereum (ETH)</option>
+                                        <option value="SOL">Solana (SOL)</option>
+                                        <!-- More options added by JS -->
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Condition</label>
+                                    <select class="form-select form-select-dark" id="alertCondition">
+                                        <option value="price_above">Price Above</option>
+                                        <option value="price_below">Price Below</option>
+                                        <option value="volume_spike">Volume Spike</option>
+                                        <option value="change_24h">24h Change</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Value</label>
+                                    <input type="text" class="form-control form-control-dark" id="alertValue" placeholder="e.g., 50000">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" onclick="saveAlert()">
+                                        <i class="fas fa-save"></i> Save Alert
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Active Alerts -->
+                            <h6 class="text-muted mb-3">Active Alerts</h6>
+                            <div id="activeAlertsList">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                            
+                            <!-- Alert History -->
+                            <div class="mt-4">
+                                <h6 class="text-muted mb-3">Alert History</h6>
+                                <div id="alertHistory">
+                                    <!-- Filled by JavaScript -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -581,13 +851,24 @@
             <div class="col-12 text-center">
                 <p class="text-muted">
                     <i class="fas fa-bolt"></i> 
-                    <strong>SPARKCHAIN</strong> - Crypto Investment Analytics Dashboard v1.1
+                    <strong>SPARKCHAIN PRO</strong> - Advanced Crypto Analytics v2.0
                 </p>
                 <p class="small text-muted">
-                    Data sourced from CoinGecko API • AI-powered predictions • Updated hourly via automated pipeline •
+                    AI-powered insights • Institutional-grade tools • Real-time data •
                     <span class="text-danger">
-                        <i class="fas fa-exclamation-circle"></i> Predictive analysis - Not financial advice
+                        <i class="fas fa-exclamation-circle"></i> Professional tool - Not financial advice
                     </span>
+                </p>
+                <p class="small text-muted">
+                    <a href="#" class="text-decoration-none text-info me-3" onclick="showApiDocs()">
+                        <i class="fas fa-code"></i> API
+                    </a>
+                    <a href="#" class="text-decoration-none text-info me-3" onclick="showMethodology()">
+                        <i class="fas fa-chart-line"></i> Methodology
+                    </a>
+                    <a href="https://github.com/yourusername/SPARKCHAIN" target="_blank" class="text-decoration-none text-info">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
                 </p>
             </div>
         </div>
@@ -597,532 +878,307 @@
     <script>
         // Global variables
         let currentData = null;
-        let trendingChart = null;
-        let marketCapChart = null;
-        let predictionsData = [];
+        let defiData = null;
+        let whaleData = null;
+        let predictionsData = null;
+        let charts = {};
+        let alerts = JSON.parse(localStorage.getItem('sparkchain_alerts')) || [];
+        let autoRefreshInterval = null;
+        let isAutoRefresh = true;
 
-        // Initialize on page load
+        // Initialize everything
         document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            loadPredictions();
-            setInterval(loadData, 300000); // Auto-refresh every 5 minutes
-            setInterval(loadPredictions, 600000); // Refresh predictions every 10 minutes
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            
+            // Load initial data
+            loadAllData();
+            
+            // Setup auto-refresh
+            setupAutoRefresh();
+            
+            // Initialize alert system
+            initializeAlertSystem();
+            
+            // Setup tab handlers
+            setupTabHandlers();
         });
 
-        async function loadData() {
+        // Setup auto-refresh
+        function setupAutoRefresh() {
+            if (isAutoRefresh) {
+                autoRefreshInterval = setInterval(loadAllData, 300000); // 5 minutes
+            }
+        }
+
+        function toggleAutoRefresh() {
+            isAutoRefresh = !isAutoRefresh;
+            const btn = document.getElementById('autoRefreshBtn');
+            
+            if (isAutoRefresh) {
+                setupAutoRefresh();
+                btn.innerHTML = '<i class="fas fa-redo"></i> Auto: ON';
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-outline-light');
+            } else {
+                clearInterval(autoRefreshInterval);
+                btn.innerHTML = '<i class="fas fa-redo"></i> Auto: OFF';
+                btn.classList.remove('btn-outline-light');
+                btn.classList.add('btn-outline-danger');
+            }
+        }
+
+        // Load all data
+        async function loadAllData() {
             showLoading(true);
             
             try {
-                const response = await fetch('data/latest.json?t=' + Date.now());
-                if (response.ok) {
-                    currentData = await response.json();
-                    console.log('Data loaded successfully:', currentData);
-                    
-                    // Validate data structure
-                    if (!currentData.trending_coins || !currentData.market_summary) {
-                        throw new Error('Invalid data structure received');
-                    }
-                    
-                    updateDashboard();
-                    
-                    document.getElementById('statusAlert').className = 'alert alert-success';
-                    document.getElementById('statusMessage').textContent = 'Live data loaded successfully';
-                    
-                } else {
-                    throw new Error('Failed to fetch data');
+                // Load market data
+                const marketResponse = await fetch('data/latest.json?t=' + Date.now());
+                if (marketResponse.ok) {
+                    currentData = await marketResponse.json();
                 }
+                
+                // Load predictions
+                const predResponse = await fetch('data/predictions.json?t=' + Date.now());
+                if (predResponse.ok) {
+                    predictionsData = await predResponse.json();
+                }
+                
+                // Load DeFi data
+                const defiResponse = await fetch('data/defi.json?t=' + Date.now());
+                if (defiResponse.ok) {
+                    defiData = await defiResponse.json();
+                }
+                
+                // Load whale data
+                const whaleResponse = await fetch('data/whale.json?t=' + Date.now());
+                if (whaleResponse.ok) {
+                    whaleData = await whaleResponse.json();
+                }
+                
+                // Update all displays
+                updateDashboard();
+                updatePredictions();
+                updateDeFiData();
+                updateWhaleTracker();
+                checkAlerts();
+                
+                // Update status
+                document.getElementById('statusAlert').className = 'alert alert-success';
+                document.getElementById('statusMessage').textContent = 
+                    'All data loaded successfully • ' + new Date().toLocaleTimeString();
                 
             } catch (error) {
                 console.error('Error loading data:', error);
-                
                 document.getElementById('statusAlert').className = 'alert alert-danger';
                 document.getElementById('statusMessage').textContent = 
-                    'Error loading live data. Please run data_pipeline.py to generate data.';
-                
-                showEmptyState();
+                    'Error loading data • ' + error.message;
             } finally {
                 showLoading(false);
             }
         }
 
-        async function loadPredictions() {
-            try {
-                // Try to load existing predictions
-                const response = await fetch('data/predictions.json?t=' + Date.now());
-                if (response.ok) {
-                    predictionsData = await response.json();
-                    updatePredictions();
-                } else {
-                    // Generate predictions if file doesn't exist
-                    generatePredictions();
-                }
-            } catch (error) {
-                console.log('Generating new predictions...');
-                generatePredictions();
-            }
-        }
-
-        function generatePredictions() {
-            if (!currentData || !currentData.trending_coins) return;
-            
-            // Generate predictive scores based on multiple factors
-            const coins = currentData.trending_coins.slice(0, 50); // Use top 50 coins
-            
-            predictionsData = coins.map(coin => {
-                const predictionScore = calculatePredictionScore(coin);
-                const predictedChange = predictFutureChange(coin);
-                
-                return {
-                    symbol: coin.symbol,
-                    name: coin.name,
-                    price: coin.price,
-                    change24h: coin.change24h,
-                    predictionScore: predictionScore,
-                    predictedChange7d: predictedChange.shortTerm,
-                    predictedChange30d: predictedChange.midTerm,
-                    confidence: predictionScore > 80 ? 'high' : predictionScore > 60 ? 'medium' : 'low',
-                    factors: getPredictionFactors(coin)
-                };
-            });
-            
-            // Sort by prediction score
-            predictionsData.sort((a, b) => b.predictionScore - a.predictionScore);
-            
-            // Take top 6 for display
-            predictionsData = predictionsData.slice(0, 6);
-            
-            updatePredictions();
-            
-            // Update prediction confidence metric
-            const avgScore = predictionsData.reduce((sum, coin) => sum + coin.predictionScore, 0) / predictionsData.length;
-            document.getElementById('predictionConfidence').textContent = Math.round(avgScore) + '%';
-            document.getElementById('highPotentialCount').textContent = predictionsData.filter(p => p.confidence === 'high').length;
-        }
-
-        function calculatePredictionScore(coin) {
-            let score = 50; // Base score
-            
-            // Factor 1: Current momentum (max 20 points)
-            if (coin.change24h > 0) {
-                score += Math.min(20, coin.change24h * 0.5);
-            }
-            
-            // Factor 2: Volume to market cap ratio (max 15 points)
-            const volumeRatio = coin.volume24h / coin.marketCap;
-            score += Math.min(15, volumeRatio * 1000);
-            
-            // Factor 3: Price stability (max 15 points)
-            // Higher price = more stability (simplified)
-            if (coin.price > 1) score += 10;
-            else if (coin.price > 0.1) score += 5;
-            
-            // Factor 4: Market cap tier (max 10 points)
-            if (coin.marketCap > 1000000000) score += 10; // Large cap
-            else if (coin.marketCap > 100000000) score += 7; // Mid cap
-            else if (coin.marketCap > 10000000) score += 4; // Small cap
-            
-            // Factor 5: Recent growth pattern (simulated)
-            const randomFactor = Math.random() * 10;
-            score += randomFactor;
-            
-            return Math.min(100, Math.max(0, score));
-        }
-
-        function predictFutureChange(coin) {
-            const volatility = coin.marketCap < 100000000 ? 0.3 : 0.15; // Smaller caps more volatile
-            
-            // Base prediction on current momentum and random factor
-            const baseChange = coin.change24h > 0 ? coin.change24h * 0.5 : 2;
-            const randomFactor = (Math.random() - 0.5) * volatility * 100;
-            
-            const shortTerm = baseChange * 0.7 + randomFactor;
-            const midTerm = baseChange * 1.5 + randomFactor * 1.2;
-            
-            return {
-                shortTerm: Math.max(-20, Math.min(50, shortTerm)),
-                midTerm: Math.max(-30, Math.min(100, midTerm))
-            };
-        }
-
-        function getPredictionFactors(coin) {
-            const factors = [];
-            
-            if (coin.change24h > 10) factors.push('Strong momentum');
-            if (coin.volume24h / coin.marketCap > 0.05) factors.push('High volume ratio');
-            if (coin.marketCap < 500000000) factors.push('Growth potential');
-            if (coin.price > 1) factors.push('Price stability');
-            
-            // Add some random factors for demonstration
-            const randomFactors = ['Technical breakout', 'Increasing adoption', 'Network growth', 'Positive sentiment'];
-            if (factors.length < 3) {
-                factors.push(randomFactors[Math.floor(Math.random() * randomFactors.length)]);
-            }
-            
-            return factors.slice(0, 3);
-        }
-
-        function updatePredictions() {
-            const container = document.getElementById('predictionsContainer');
-            
-            if (!predictionsData || predictionsData.length === 0) {
-                container.innerHTML = `
-                    <div class="col-12 text-center py-4">
-                        <i class="fas fa-crystal-ball fa-2x text-muted mb-3"></i>
-                        <p class="text-muted">No prediction data available</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Update prediction metrics
-            const avgShortTerm = predictionsData.reduce((sum, p) => sum + p.predictedChange7d, 0) / predictionsData.length;
-            const avgMidTerm = predictionsData.reduce((sum, p) => sum + p.predictedChange30d, 0) / predictionsData.length;
-            
-            document.getElementById('shortTermPrediction').textContent = `+${avgShortTerm.toFixed(1)}%`;
-            document.getElementById('midTermPrediction').textContent = `+${avgMidTerm.toFixed(1)}%`;
-            
-            // Calculate risk level based on volatility
-            const volatility = predictionsData.filter(p => p.marketCap < 100000000).length / predictionsData.length;
-            let riskLevel = 'Low';
-            let riskPercent = 30;
-            
-            if (volatility > 0.5) {
-                riskLevel = 'High';
-                riskPercent = 80;
-            } else if (volatility > 0.3) {
-                riskLevel = 'Medium';
-                riskPercent = 60;
-            }
-            
-            document.getElementById('riskLevel').textContent = riskLevel;
-            document.getElementById('riskMeter').style.width = riskPercent + '%';
-            
-            // Generate prediction cards
-            let html = '';
-            predictionsData.forEach((prediction, index) => {
-                const confidenceClass = prediction.confidence === 'high' ? 'confidence-high' : 
-                                      prediction.confidence === 'medium' ? 'confidence-medium' : 'confidence-low';
-                const confidenceDot = prediction.confidence === 'high' ? 'dot-high' : 
-                                    prediction.confidence === 'medium' ? 'dot-medium' : 'dot-low';
-                
-                html += `
-                    <div class="col-xl-4 col-lg-6 mb-3">
-                        <div class="prediction-card">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h6 class="mb-1">${prediction.name}</h6>
-                                    <span class="badge bg-dark">${prediction.symbol}</span>
-                                </div>
-                                <div class="text-end">
-                                    <div class="prediction-up fw-bold">${prediction.predictionScore}/100</div>
-                                    <div class="small ${confidenceClass}">
-                                        <span class="prediction-dot ${confidenceDot}"></span>
-                                        ${prediction.confidence.charAt(0).toUpperCase() + prediction.confidence.slice(1)} Confidence
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-2">
-                                <div class="small text-muted">Current Price</div>
-                                <div class="fw-bold">$${prediction.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</div>
-                            </div>
-                            
-                            <div class="row mb-2">
-                                <div class="col-6">
-                                    <div class="small text-muted">7-Day Prediction</div>
-                                    <div class="fw-bold ${prediction.predictedChange7d >= 0 ? 'prediction-up' : 'price-down'}">
-                                        ${prediction.predictedChange7d >= 0 ? '+' : ''}${prediction.predictedChange7d.toFixed(1)}%
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="small text-muted">30-Day Prediction</div>
-                                    <div class="fw-bold ${prediction.predictedChange30d >= 0 ? 'prediction-up' : 'price-down'}">
-                                        ${prediction.predictedChange30d >= 0 ? '+' : ''}${prediction.predictedChange30d.toFixed(1)}%
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-3">
-                                <div class="small text-muted mb-1">Key Factors</div>
-                                <div class="d-flex flex-wrap gap-1">
-                                    ${prediction.factors.map(factor => 
-                                        `<span class="badge bg-secondary small">${factor}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                            
-                            <div class="mt-3 d-flex justify-content-between">
-                                <button class="btn btn-sm btn-outline-predict" onclick="viewPredictionDetails('${prediction.symbol}')">
-                                    <i class="fas fa-chart-line me-1"></i> Analyze
-                                </button>
-                                <button class="btn btn-sm btn-outline-info" onclick="setReminder('${prediction.symbol}')">
-                                    <i class="fas fa-bell me-1"></i> Alert
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function showEmptyState() {
-            // Clear all data displays
-            document.getElementById('totalCoins').textContent = '0';
-            document.getElementById('newCoins').textContent = '0';
-            document.getElementById('trendingCoins').textContent = '0';
-            document.getElementById('trendingChange').textContent = '0%';
-            document.getElementById('totalMarketCap').textContent = '$0';
-            document.getElementById('marketCapChange').textContent = '0%';
-            document.getElementById('predictionConfidence').textContent = '0%';
-            
-            // Clear table
-            const tbody = document.getElementById('trendingTableBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" class="text-center py-4 text-muted">
-                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
-                        <p>No data available. Please run data_pipeline.py first.</p>
-                    </td>
-                </tr>
-            `;
-            
-            // Clear charts
-            clearCharts();
-        }
-
-        function clearCharts() {
-            if (trendingChart) {
-                trendingChart.destroy();
-                trendingChart = null;
-            }
-            if (marketCapChart) {
-                marketCapChart.destroy();
-                marketCapChart = null;
-            }
-            
-            // Show empty chart messages
-            document.getElementById('trendingChart').parentNode.innerHTML = `
-                <div class="text-center py-5">
-                    <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
-                    <h6 class="text-muted">No chart data available</h6>
-                </div>
-            `;
-            
-            document.getElementById('marketCapChart').parentNode.innerHTML = `
-                <div class="text-center py-5">
-                    <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
-                    <h6 class="text-muted">No market cap data available</h6>
-                </div>
-            `;
-        }
-
+        // Update main dashboard
         function updateDashboard() {
             if (!currentData) return;
             
-            const summary = currentData.market_summary;
-            const trending = currentData.trending_coins || [];
+            const summary = currentData.market_summary || {};
             
-            // Update stats with null checks
-            document.getElementById('totalCoins').textContent = 
-                (summary.total_coins_tracked || 0).toLocaleString();
-            document.getElementById('newCoins').textContent = 
-                summary.new_coins_today || 0;
-            document.getElementById('trendingCoins').textContent = 
-                summary.trending_coins_count || 0;
-            document.getElementById('trendingChange').textContent = 
-                (summary.trending_growth || 0).toFixed(1) + '%';
-            
-            // Format large numbers properly
-            const marketCap = summary.total_market_cap || 0;
-            
-            document.getElementById('totalMarketCap').textContent = 
-                marketCap >= 1000000000 ? 
-                '$' + (marketCap / 1000000000).toFixed(1) + 'B' : 
-                '$' + (marketCap / 1000000).toFixed(1) + 'M';
-            
+            // Update stats
+            document.getElementById('marketCapStat').textContent = 
+                formatCurrency(summary.total_market_cap || 0);
             document.getElementById('marketCapChange').textContent = 
-                (summary.market_cap_change_24h || 0).toFixed(1) + '%';
+                `${(summary.market_cap_change_24h || 0).toFixed(1)}%`;
             
             // Update timestamp
-            const lastUpdated = new Date(currentData.timestamp || Date.now());
-            document.getElementById('lastUpdated').textContent = lastUpdated.toLocaleTimeString();
-            
-            // Update trending table
-            updateTrendingTable(trending);
+            document.getElementById('lastUpdated').querySelector('span').textContent = 
+                new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             // Update charts
-            updateCharts();
+            updateMarketCharts();
             
-            // Update status
-            document.getElementById('trendingCount').textContent = trending.length + ' coins';
+            // Update tables
+            updateTopCoinsTable();
         }
 
-        function updateTrendingTable(coins) {
-            const tbody = document.getElementById('trendingTableBody');
+        // Update predictions
+        function updatePredictions() {
+            if (!predictionsData) return;
             
-            if (!coins || coins.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">
-                            <i class="fas fa-search fa-2x mb-3"></i>
-                            <p>No trending coins found</p>
-                        </td>
-                    </tr>
-                `;
+            const metrics = predictionsData.prediction_metrics || {};
+            const topPredictions = predictionsData.top_predictions || [];
+            
+            // Update prediction metrics
+            document.getElementById('prediction7d').textContent = 
+                `+${metrics.average_7d_prediction || 0}%`;
+            document.getElementById('prediction30d').textContent = 
+                `+${metrics.average_30d_prediction || 0}%`;
+            document.getElementById('aiPredictionConfidence').textContent = 
+                `${Math.round((metrics.high_confidence_count || 0) / (metrics.total_predicted || 1) * 100)}%`;
+            
+            if (topPredictions.length > 0) {
+                document.getElementById('topPredictedCoin').textContent = topPredictions[0].symbol;
+            }
+            
+            // Update predictions grid
+            updatePredictionsGrid(topPredictions);
+        }
+
+        // Update DeFi data
+        function updateDeFiData() {
+            if (!defiData) return;
+            
+            document.getElementById('totalTVL').textContent = 
+                formatCurrency(defiData.total_value_locked || 0);
+            
+            if (defiData.top_protocols && defiData.top_protocols.length > 0) {
+                document.getElementById('topProtocol').textContent = defiData.top_protocols[0].name;
+                document.getElementById('protocolTVL').textContent = 
+                    formatCurrency(defiData.top_protocols[0].tvl) + ' TVL';
+            }
+            
+            // Update DeFi tables
+            updateDeFiTables();
+        }
+
+        // Update whale tracker
+        function updateWhaleTracker() {
+            if (!whaleData) return;
+            
+            document.getElementById('whaleActivity').textContent = 
+                whaleData.length || 0;
+            
+            updateWhaleTable();
+        }
+
+        // Alert system
+        function initializeAlertSystem() {
+            // Load saved alerts
+            alerts = JSON.parse(localStorage.getItem('sparkchain_alerts')) || [];
+            updateAlertsDisplay();
+        }
+
+        function createNewAlert() {
+            // Show alert creation modal (simplified)
+            const asset = document.getElementById('alertAsset').value;
+            const condition = document.getElementById('alertCondition').value;
+            const value = document.getElementById('alertValue').value;
+            
+            if (!value) {
+                alert('Please enter a value for the alert');
                 return;
             }
             
-            let html = '';
-            coins.forEach((coin, index) => {
-                // Add null checks for each property
-                const price = coin.price || 0;
-                const change24h = coin.change24h || 0;
-                const marketCap = coin.marketCap || 0;
-                const volume24h = coin.volume24h || 0;
-                const sparkScore = coin.sparkScore || 0;
-                
-                const changeClass = change24h >= 0 ? 'price-up' : 'price-down';
-                const changeIcon = change24h >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-                const sparkScoreClass = sparkScore >= 80 ? 'success' : sparkScore >= 60 ? 'warning' : 'danger';
-                
-                // Format numbers properly
-                const priceFormatted = price < 0.01 ? 
-                    price.toFixed(8) : 
-                    price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
-                
-                const marketCapFormatted = marketCap >= 1000000000 ? 
-                    (marketCap / 1000000000).toFixed(2) + 'B' : 
-                    (marketCap / 1000000).toFixed(1) + 'M';
-                
-                const volumeFormatted = volume24h >= 1000000000 ? 
-                    (volume24h / 1000000000).toFixed(2) + 'B' : 
-                    (volume24h / 1000000).toFixed(1) + 'M';
-                
-                html += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>
-                            <strong>${coin.symbol || 'N/A'}</strong>
-                            <div class="small text-muted">${coin.name || 'Unknown'}</div>
-                        </td>
-                        <td>$${priceFormatted}</td>
-                        <td class="${changeClass}">
-                            <i class="fas ${changeIcon} me-1"></i>
-                            ${Math.abs(change24h).toFixed(2)}%
-                        </td>
-                        <td>$${marketCapFormatted}</td>
-                        <td>$${volumeFormatted}</td>
-                        <td>
-                            <span class="badge bg-${sparkScoreClass}">
-                                ${sparkScore}/100
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-info" onclick="analyzeCoin('${coin.symbol || ''}')">
-                                <i class="fas fa-chart-line"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+            const newAlert = {
+                id: Date.now(),
+                asset,
+                condition,
+                value,
+                active: true,
+                triggered: false,
+                created: new Date().toISOString()
+            };
             
-            tbody.innerHTML = html;
+            alerts.push(newAlert);
+            saveAlerts();
+            updateAlertsDisplay();
+            
+            document.getElementById('alertValue').value = '';
+            alert('Alert created successfully!');
         }
 
-        function updateCharts() {
-            const trendingCtx = document.getElementById('trendingChart');
-            const marketCapCtx = document.getElementById('marketCapChart');
+        function saveAlerts() {
+            localStorage.setItem('sparkchain_alerts', JSON.stringify(alerts));
+        }
+
+        function checkAlerts() {
+            if (!currentData || !currentData.trending_coins) return;
             
-            // Clear existing charts
-            if (trendingChart) trendingChart.destroy();
-            if (marketCapChart) marketCapChart.destroy();
+            let triggeredCount = 0;
             
-            const coins = currentData.trending_coins || [];
+            alerts.forEach(alert => {
+                if (!alert.active || alert.triggered) return;
+                
+                const coin = currentData.trending_coins.find(c => c.symbol === alert.asset);
+                if (!coin) return;
+                
+                let shouldTrigger = false;
+                
+                switch (alert.condition) {
+                    case 'price_above':
+                        shouldTrigger = coin.price > parseFloat(alert.value);
+                        break;
+                    case 'price_below':
+                        shouldTrigger = coin.price < parseFloat(alert.value);
+                        break;
+                    case 'volume_spike':
+                        // Simplified volume spike detection
+                        shouldTrigger = coin.volume24h > (coin.marketCap * 0.1);
+                        break;
+                }
+                
+                if (shouldTrigger) {
+                    triggerAlert(alert, coin);
+                    triggeredCount++;
+                }
+            });
             
-            if (coins.length > 0) {
-                // Trending Chart (Performance)
-                const labels = coins.slice(0, 7).map(c => c.symbol || 'N/A');
-                const changes = coins.slice(0, 7).map(c => c.change24h || 0);
-                
-                trendingChart = new Chart(trendingCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '24h Change %',
-                            data: changes,
-                            backgroundColor: changes.map(c => c >= 0 ? 'rgba(0, 184, 148, 0.7)' : 'rgba(231, 76, 60, 0.7)'),
-                            borderColor: changes.map(c => c >= 0 ? 'rgb(0, 184, 148)' : 'rgb(231, 76, 60)'),
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: '24h Change (%)'
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                // Market Cap Distribution Chart
-                const marketCapData = coins.slice(0, 5).map(c => c.marketCap || 0);
-                const marketCapLabels = coins.slice(0, 5).map(c => c.symbol || 'N/A');
-                
-                marketCapChart = new Chart(marketCapCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: marketCapLabels,
-                        datasets: [{
-                            data: marketCapData,
-                            backgroundColor: [
-                                'rgba(0, 173, 181, 0.7)',
-                                'rgba(108, 92, 231, 0.7)',
-                                'rgba(0, 184, 148, 0.7)',
-                                'rgba(253, 203, 110, 0.7)',
-                                'rgba(156, 39, 176, 0.7)'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            } else {
-                // Show empty chart message
-                trendingCtx.parentNode.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
-                        <h6 class="text-muted">No chart data available</h6>
-                    </div>
-                `;
-                
-                marketCapCtx.parentNode.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
-                        <h6 class="text-muted">No market cap data available</h6>
-                    </div>
-                `;
+            if (triggeredCount > 0) {
+                updateAlertsDisplay();
+                showNotification(`${triggeredCount} alerts triggered!`);
             }
+        }
+
+        function triggerAlert(alert, coin) {
+            alert.triggered = true;
+            alert.triggeredAt = new Date().toISOString();
+            alert.triggeredPrice = coin.price;
+            
+            // Show browser notification
+            if (Notification.permission === 'granted') {
+                new Notification(`🚨 Alert: ${alert.asset}`, {
+                    body: `${alert.asset} ${alert.condition} ${alert.value}`,
+                    icon: '/favicon.ico'
+                });
+            }
+            
+            saveAlerts();
+        }
+
+        function updateAlertsDisplay() {
+            const activeAlerts = alerts.filter(a => a.active && !a.triggered);
+            const triggeredAlerts = alerts.filter(a => a.triggered);
+            
+            // Update count badge
+            const badge = document.getElementById('alertsCount');
+            if (activeAlerts.length > 0) {
+                badge.textContent = activeAlerts.length;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+            
+            document.getElementById('activeAlertsCount').textContent = activeAlerts.length;
+            
+            // Update alerts list
+            updateAlertsList(activeAlerts, triggeredAlerts);
+        }
+
+        // Utility functions
+        function formatCurrency(value) {
+            if (value >= 1000000000000) {
+                return '$' + (value / 1000000000000).toFixed(2) + 'T';
+            } else if (value >= 1000000000) {
+                return '$' + (value / 1000000000).toFixed(2) + 'B';
+            } else if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(2) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(2) + 'K';
+            }
+            return '$' + value.toFixed(2);
         }
 
         function showLoading(show) {
@@ -1131,79 +1187,132 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
                 btn.disabled = true;
             } else {
-                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh All';
                 btn.disabled = false;
             }
         }
 
-        function runPredictiveAnalysis() {
-            document.getElementById('statusMessage').textContent = 'Running predictive analysis...';
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-warning alert-dismissible fade show position-fixed';
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-bell me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
             
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
             setTimeout(() => {
-                generatePredictions();
-                document.getElementById('statusMessage').textContent = 'Predictive analysis complete!';
-                
-                // Show success alert
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-success alert-dismissible fade show';
-                alertDiv.innerHTML = `
-                    <i class="fas fa-check-circle me-2"></i>
-                    Predictive analysis updated! ${predictionsData.length} high-potential coins identified.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                document.getElementById('statusAlert').parentNode.insertBefore(alertDiv, document.getElementById('statusAlert').nextSibling);
-            }, 1500);
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
         }
 
-        function viewPredictionDetails(symbol) {
-            const prediction = predictionsData.find(p => p.symbol === symbol);
-            if (prediction) {
-                alert(`Prediction Analysis for ${symbol}:\n\n` +
-                      `Current Price: $${prediction.price.toFixed(4)}\n` +
-                      `24h Change: ${prediction.change24h >= 0 ? '+' : ''}${prediction.change24h.toFixed(2)}%\n` +
-                      `7-Day Prediction: ${prediction.predictedChange7d >= 0 ? '+' : ''}${prediction.predictedChange7d.toFixed(1)}%\n` +
-                      `30-Day Prediction: ${prediction.predictedChange30d >= 0 ? '+' : ''}${prediction.predictedChange30d.toFixed(1)}%\n` +
-                      `Confidence Level: ${prediction.confidence.toUpperCase()}\n` +
-                      `Prediction Score: ${prediction.predictionScore}/100\n\n` +
-                      `Key Factors:\n• ${prediction.factors.join('\n• ')}`);
-            }
-        }
-
-        function setReminder(symbol) {
-            const price = prompt(`Set price alert for ${symbol}:\nEnter target price (USD):`);
-            if (price && !isNaN(parseFloat(price))) {
-                alert(`Alert set for ${symbol} at $${parseFloat(price).toFixed(4)}!\n\nYou'll receive a browser notification when this price is reached.`);
-            }
-        }
-
-        function analyzeCoin(symbol) {
-            alert(`Detailed analysis for ${symbol} would be shown here.\n\nThis feature would include:\n• Price history\n• Volume analysis\n• Social sentiment\n• On-chain metrics\n• AI prediction score`);
-        }
-
-        function exportCoinsData() {
-            if (!currentData || !currentData.trending_coins || currentData.trending_coins.length === 0) {
-                alert('No data to export. Please load data first.');
-                return;
-            }
-            
-            let csv = 'Symbol,Name,Price,24h Change (%),Market Cap,24h Volume,Spark Score\n';
-            
-            currentData.trending_coins.forEach(coin => {
-                csv += `"${coin.symbol || ''}","${coin.name || ''}",${coin.price || 0},${coin.change24h || 0},${coin.marketCap || 0},${coin.volume24h || 0},${coin.sparkScore || 0}\n`;
+        // Tab navigation
+        function setupTabHandlers() {
+            const tabTriggers = document.querySelectorAll('[data-bs-toggle="tab"]');
+            tabTriggers.forEach(trigger => {
+                trigger.addEventListener('shown.bs.tab', function(event) {
+                    const target = event.target.getAttribute('href');
+                    // Load data for tab if needed
+                    if (target === '#tab-predictions' && !predictionsData) {
+                        loadPredictions();
+                    } else if (target === '#tab-defi' && !defiData) {
+                        loadDeFiData();
+                    }
+                });
             });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `sparkchain_coins_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            alert(`Exported ${currentData.trending_coins.length} coins to CSV.`);
+        }
+
+        function showTab(tabName) {
+            const tab = document.querySelector(`[data-bs-target="#tab-${tabName}"]`);
+            if (tab) {
+                new bootstrap.Tab(tab).show();
+            }
+        }
+
+        // Placeholder functions for additional features
+        function updateMarketCharts() {
+            // Chart implementation would go here
+            console.log('Update charts');
+        }
+
+        function updateTopCoinsTable() {
+            // Table implementation would go here
+            console.log('Update top coins table');
+        }
+
+        function updatePredictionsGrid(predictions) {
+            // Grid implementation would go here
+            console.log('Update predictions grid');
+        }
+
+        function updateDeFiTables() {
+            // DeFi tables implementation
+            console.log('Update DeFi tables');
+        }
+
+        function updateWhaleTable() {
+            // Whale table implementation
+            console.log('Update whale table');
+        }
+
+        function updateAlertsList(active, triggered) {
+            // Alerts list implementation
+            console.log('Update alerts list');
+        }
+
+        function optimizePortfolio() {
+            alert('Portfolio optimization feature - Coming soon!');
+        }
+
+        function exportPortfolio() {
+            alert('Export portfolio feature - Coming soon!');
+        }
+
+        function sortBy(criteria) {
+            alert(`Sort by ${criteria} - Coming soon!`);
+        }
+
+        function exportTableData() {
+            alert('Export table data - Coming soon!');
+        }
+
+        function exportAllData() {
+            alert('Export all data - Coming soon!');
+        }
+
+        function configureAlerts() {
+            showTab('alerts');
+        }
+
+        function showApiDocs() {
+            alert('API Documentation - Coming soon!');
+        }
+
+        function showMethodology() {
+            alert('Methodology documentation - Coming soon!');
+        }
+
+        function clearAllAlerts() {
+            if (confirm('Clear all alerts?')) {
+                alerts = [];
+                saveAlerts();
+                updateAlertsDisplay();
+            }
+        }
+
+        function saveAlert() {
+            createNewAlert();
         }
     </script>
+    
+    <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
