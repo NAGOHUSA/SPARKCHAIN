@@ -1,14 +1,14 @@
-name: Update Crypto Data & Predictions
+name: SPARKCHAIN PRO Data Pipeline
 
 on:
   schedule:
     - cron: '0 * * * *'  # Run every hour
-  workflow_dispatch:      # Allow manual trigger
+  workflow_dispatch:      # Manual trigger
   push:
     branches: [ main ]
 
 jobs:
-  update-data:
+  update-analytics:
     runs-on: ubuntu-latest
     
     steps:
@@ -21,17 +21,25 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install requests numpy
+        cd scripts
+        pip install requests numpy pandas
     
-    - name: Run data pipeline
+    - name: Run analytics pipeline
       run: |
         cd scripts
         python data_pipeline.py
+    
+    - name: Verify data generation
+      run: |
+        echo "Generated files:"
+        ls -la data/
+        echo "File sizes:"
+        du -h data/*.json
     
     - name: Commit and push updates
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add data/
-        git commit -m "Auto-update with predictions: $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
+        git commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M') UTC" || echo "No changes to commit"
         git push origin main || echo "Nothing to push"
