@@ -664,8 +664,7 @@
                                     <select class="form-select form-select-dark" id="riskProfile">
                                         <option value="conservative">Conservative</option>
                                         <option value="balanced" selected>Balanced</option>
-                                        <option value="aggressive">Aggressive</option>
-                                    </select>
+                                        <option value="aggressive">Aggressive</option                                    </select>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label fw-bold">Time Horizon</label>
@@ -881,6 +880,8 @@
         let defiData = null;
         let whaleData = null;
         let predictionsData = null;
+        let sentimentData = null;
+        let arbitrageData = null;
         let charts = {};
         let alerts = JSON.parse(localStorage.getItem('sparkchain_alerts')) || [];
         let autoRefreshInterval = null;
@@ -930,40 +931,49 @@
             }
         }
 
-        // Load all data
+        // Load all data from GitHub
         async function loadAllData() {
             showLoading(true);
             
             try {
-                // Load market data
-                const marketResponse = await fetch('data/latest.json?t=' + Date.now());
-                if (marketResponse.ok) {
-                    currentData = await marketResponse.json();
-                }
+                // Base URL for GitHub raw files
+                const baseUrl = 'https://raw.githubusercontent.com/NAGOHUSA/SPARKCHAIN/main/data/';
                 
-                // Load predictions
-                const predResponse = await fetch('data/predictions.json?t=' + Date.now());
-                if (predResponse.ok) {
-                    predictionsData = await predResponse.json();
+                // Load all data files from GitHub
+                const responses = await Promise.all([
+                    fetch(`${baseUrl}latest.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}predictions.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}defi.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}whale.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}sentiment.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}arbitrage.json?t=${Date.now()}`)
+                ]);
+
+                // Check if all responses are OK
+                if (responses.some(r => !r.ok)) {
+                    throw new Error('One or more data files failed to load');
                 }
-                
-                // Load DeFi data
-                const defiResponse = await fetch('data/defi.json?t=' + Date.now());
-                if (defiResponse.ok) {
-                    defiData = await defiResponse.json();
-                }
-                
-                // Load whale data
-                const whaleResponse = await fetch('data/whale.json?t=' + Date.now());
-                if (whaleResponse.ok) {
-                    whaleData = await whaleResponse.json();
-                }
+
+                // Parse all responses
+                const [marketData, predictions, defi, whale, sentiment, arbitrage] = await Promise.all(
+                    responses.map(r => r.json())
+                );
+
+                // Assign to global variables
+                currentData = marketData;
+                predictionsData = predictions;
+                defiData = defi;
+                whaleData = whale;
+                sentimentData = sentiment;
+                arbitrageData = arbitrage;
                 
                 // Update all displays
                 updateDashboard();
                 updatePredictions();
                 updateDeFiData();
                 updateWhaleTracker();
+                updateSentiment();
+                updateArbitrage();
                 checkAlerts();
                 
                 // Update status
@@ -976,6 +986,9 @@
                 document.getElementById('statusAlert').className = 'alert alert-danger';
                 document.getElementById('statusMessage').textContent = 
                     'Error loading data • ' + error.message;
+                
+                // Show specific error in console
+                console.log('Make sure your GitHub repository is public and files are accessible.');
             } finally {
                 showLoading(false);
             }
@@ -993,6 +1006,17 @@
             document.getElementById('marketCapChange').textContent = 
                 `${(summary.market_cap_change_24h || 0).toFixed(1)}%`;
             
+            // Update DeFi TVL from defiData if available
+            if (defiData && defiData.total_value_locked) {
+                document.getElementById('defiTVL').textContent = 
+                    formatCurrency(defiData.total_value_locked);
+            }
+            
+            // Update whale activity count
+            if (whaleData && Array.isArray(whaleData)) {
+                document.getElementById('whaleActivity').textContent = whaleData.length;
+            }
+            
             // Update timestamp
             document.getElementById('lastUpdated').querySelector('span').textContent = 
                 new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1002,6 +1026,40 @@
             
             // Update tables
             updateTopCoinsTable();
+        }
+
+        // Update sentiment gauge
+        function updateSentiment() {
+            if (!sentimentData) return;
+            
+            const sentimentValue = sentimentData.fear_greed_index || 50;
+            const pointer = document.getElementById('sentimentPointer');
+            const label = document.getElementById('sentimentLabel');
+            const fearGreedStat = document.getElementById('fearGreedStat');
+            
+            if (pointer) {
+                pointer.style.left = `${sentimentValue}%`;
+            }
+            
+            if (fearGreedStat) {
+                fearGreedStat.textContent = sentimentValue;
+            }
+            
+            if (label) {
+                if (sentimentValue < 30) {
+                    label.textContent = 'Fear';
+                    label.className = 'text-danger';
+                    fearGreedStat.className = 'mb-0 text-danger';
+                } else if (sentimentValue < 70) {
+                    label.textContent = 'Neutral';
+                    label.className = 'text-warning';
+                    fearGreedStat.className = 'mb-0 text-warning';
+                } else {
+                    label.textContent = 'Greed';
+                    label.className = 'text-success';
+                    fearGreedStat.className = 'mb-0 text-success';
+                }
+            }
         }
 
         // Update predictions
@@ -1042,6 +1100,7 @@
             
             // Update DeFi tables
             updateDeFiTables();
+            updateYieldOpportunities();
         }
 
         // Update whale tracker
@@ -1052,6 +1111,199 @@
                 whaleData.length || 0;
             
             updateWhaleTable();
+        }
+
+        // Update arbitrage opportunities
+        function updateArbitrage() {
+            if (!arbitrageData || !Array.isArray(arbitrageData)) return;
+            
+            const container = document.getElementById('arbitrageOpportunities');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            arbitrageData.slice(0, 6).forEach(opp => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+                col.innerHTML = `
+                    <div class="crypto-card">
+                        <h6>${opp.pair || 'N/A'}</h6>
+                        <div class="small text-muted">${opp.exchange1} → ${opp.exchange2}</div>
+                        <div class="mt-2">
+                            <span class="badge bg-success">${opp.profit || 0}%</span>
+                            <span class="small text-muted ms-2">${opp.volume || 'Low'} volume</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        // Update top coins table
+        function updateTopCoinsTable() {
+            if (!currentData || !currentData.trending_coins) return;
+            
+            const tbody = document.getElementById('topCoinsTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            currentData.trending_coins.slice(0, 10).forEach((coin, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <strong>${coin.symbol}</strong>
+                        <div class="small text-muted">${coin.name}</div>
+                    </td>
+                    <td>${formatCurrency(coin.price)}</td>
+                    <td class="${coin.change_24h >= 0 ? 'price-up' : 'price-down'}">
+                        ${coin.change_24h >= 0 ? '+' : ''}${coin.change_24h}%
+                    </td>
+                    <td>${formatCurrency(coin.marketCap)}</td>
+                    <td>${formatCurrency(coin.volume24h)}</td>
+                    <td>
+                        <div class="progress-custom">
+                            <div class="progress-bar-custom" style="width: ${coin.spark_score || 50}%;"></div>
+                        </div>
+                        <small>${coin.spark_score || 50}/100</small>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-spark" onclick="alert('Buy ${coin.symbol}')">
+                            <i class="fas fa-chart-line"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" onclick="alert('Alert for ${coin.symbol}')">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update DeFi tables
+        function updateDeFiTables() {
+            if (!defiData || !defiData.top_protocols) return;
+            
+            const tbody = document.getElementById('defiProtocolsTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            defiData.top_protocols.forEach(protocol => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${protocol.name}</strong></td>
+                    <td><span class="badge bg-secondary">${protocol.category}</span></td>
+                    <td>${formatCurrency(protocol.tvl)}</td>
+                    <td class="${protocol.change_24h >= 0 ? 'price-up' : 'price-down'}">
+                        ${protocol.change_24h >= 0 ? '+' : ''}${protocol.change_24h}%
+                    </td>
+                    <td>${protocol.token || 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-defi" onclick="alert('View ${protocol.name}')">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update yield opportunities
+        function updateYieldOpportunities() {
+            if (!defiData || !defiData.yield_opportunities) return;
+            
+            const container = document.getElementById('yieldOpportunities');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            defiData.yield_opportunities.slice(0, 4).forEach(yieldOpp => {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-3';
+                col.innerHTML = `
+                    <div class="defi-card">
+                        <h6>${yieldOpp.protocol}</h6>
+                        <div class="small text-muted">${yieldOpp.asset}</div>
+                        <div class="mt-2">
+                            <span class="badge bg-success">APY: ${yieldOpp.apy}%</span>
+                        </div>
+                        <div class="mt-2 small">
+                            Risk: <span class="${yieldOpp.risk === 'low' ? 'text-success' : 
+                                               yieldOpp.risk === 'medium' ? 'text-warning' : 'text-danger'}">
+                                ${yieldOpp.risk}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        // Update whale table
+        function updateWhaleTable() {
+            if (!whaleData || !Array.isArray(whaleData)) return;
+            
+            const tbody = document.getElementById('whaleTrackerTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            whaleData.slice(0, 10).forEach(activity => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${activity.asset}</strong></td>
+                    <td>${activity.activity_type}</td>
+                    <td>${formatCurrency(activity.amount)}</td>
+                    <td class="${activity.direction === 'buy' ? 'price-up' : 'price-down'}">
+                        ${activity.direction === 'buy' ? 'Buy' : 'Sell'}
+                    </td>
+                    <td>
+                        <span class="badge ${activity.significance === 'high' ? 'bg-danger' : 
+                                          activity.significance === 'medium' ? 'bg-warning' : 'bg-secondary'}">
+                            ${activity.significance}
+                        </span>
+                    </td>
+                    <td>${new Date(activity.timestamp).toLocaleTimeString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update predictions grid
+        function updatePredictionsGrid(predictions) {
+            const container = document.getElementById('aiPredictionsGrid');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            predictions.slice(0, 6).forEach(pred => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+                col.innerHTML = `
+                    <div class="prediction-card">
+                        <h5>${pred.symbol}</h5>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="small text-muted">Current</div>
+                                <div>${formatCurrency(pred.current_price)}</div>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Prediction</div>
+                                <div class="prediction-up">+${pred.predicted_change}%</div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="progress-custom">
+                                <div class="progress-bar-custom" style="width: ${pred.confidence}%;"></div>
+                            </div>
+                            <small>Confidence: ${pred.confidence}%</small>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
         }
 
         // Alert system
@@ -1221,9 +1473,9 @@
                     const target = event.target.getAttribute('href');
                     // Load data for tab if needed
                     if (target === '#tab-predictions' && !predictionsData) {
-                        loadPredictions();
+                        loadAllData();
                     } else if (target === '#tab-defi' && !defiData) {
-                        loadDeFiData();
+                        loadAllData();
                     }
                 });
             });
@@ -1240,26 +1492,6 @@
         function updateMarketCharts() {
             // Chart implementation would go here
             console.log('Update charts');
-        }
-
-        function updateTopCoinsTable() {
-            // Table implementation would go here
-            console.log('Update top coins table');
-        }
-
-        function updatePredictionsGrid(predictions) {
-            // Grid implementation would go here
-            console.log('Update predictions grid');
-        }
-
-        function updateDeFiTables() {
-            // DeFi tables implementation
-            console.log('Update DeFi tables');
-        }
-
-        function updateWhaleTable() {
-            // Whale table implementation
-            console.log('Update whale table');
         }
 
         function updateAlertsList(active, triggered) {
