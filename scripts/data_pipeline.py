@@ -7,12 +7,16 @@ Fetches crypto data from CoinGecko and generates predictive insights
 import requests
 import json
 import os
+import sys
 from datetime import datetime, timedelta
 import numpy as np
 
-# Configuration
+# Add parent directory to path to import from root if needed
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Configuration - FIXED PATHS for GitHub Actions
 CONFIG = {
-    "data_dir": "data",
+    "data_dir": os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"),
     "coingecko_api": "https://api.coingecko.com/api/v3",
     "coingecko_params": {
         "vs_currency": "usd",
@@ -111,7 +115,6 @@ def calculate_prediction_score(coin_data):
         score += 3
     
     # Factor 5: Historical consistency (simulated)
-    # In production, you'd analyze 7d, 14d, 30d changes
     score += np.random.uniform(0, 10)
     
     return min(100, max(0, score))
@@ -198,7 +201,7 @@ def process_data():
     
     if not coingecko_data:
         print("No data fetched from CoinGecko")
-        return {}
+        return {}, {}
     
     # Process CoinGecko data with CORRECT camelCase keys
     processed_coins = []
@@ -257,8 +260,9 @@ def process_data():
     # Load existing data to identify new coins
     existing_data = []
     try:
-        if os.path.exists(os.path.join(CONFIG['data_dir'], 'latest.json')):
-            with open(os.path.join(CONFIG['data_dir'], 'latest.json'), 'r') as f:
+        latest_file = os.path.join(CONFIG['data_dir'], 'latest.json')
+        if os.path.exists(latest_file):
+            with open(latest_file, 'r') as f:
                 existing = json.load(f)
                 existing_data = existing.get('trending_coins', [])
     except:
