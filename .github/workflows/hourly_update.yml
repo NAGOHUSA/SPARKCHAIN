@@ -1,4 +1,4 @@
-name: Update Crypto Data
+name: Update Crypto Data & Predictions
 
 on:
   schedule:
@@ -21,7 +21,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install requests
+        pip install requests numpy
     
     - name: Run data pipeline
       run: |
@@ -32,5 +32,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add data/
-        git commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
+        git commit -m "Auto-update with predictions: $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
         git push origin main || echo "Nothing to push"
