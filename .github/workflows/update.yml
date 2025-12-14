@@ -25,6 +25,7 @@ jobs:
     
     - name: Run data pipeline
       run: |
+        cd scripts
         python data_pipeline.py
     
     - name: Commit and push updates
