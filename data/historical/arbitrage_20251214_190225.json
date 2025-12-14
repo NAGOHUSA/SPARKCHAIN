@@ -1,0 +1,67 @@
+[
+  {
+    "symbol": "SOL",
+    "name": "Solana",
+    "buy_exchange": "Bybit",
+    "sell_exchange": "Huobi",
+    "buy_price": 126.9743,
+    "sell_price": 134.4526,
+    "profit_pct": 5.89,
+    "net_profit_pct": 5.49,
+    "risk": "low",
+    "volume_required": 20880,
+    "timestamp": "2025-12-14T19:02:25.848232"
+  },
+  {
+    "symbol": "FIGR_HELOC",
+    "name": "Figure Heloc",
+    "buy_exchange": "Binance",
+    "sell_exchange": "KuCoin",
+    "buy_price": 0.9725,
+    "sell_price": 1.0282,
+    "profit_pct": 5.73,
+    "net_profit_pct": 5.33,
+    "risk": "low",
+    "volume_required": 24551,
+    "timestamp": "2025-12-14T19:02:25.848356"
+  },
+  {
+    "symbol": "ADA",
+    "name": "Cardano",
+    "buy_exchange": "Binance",
+    "sell_exchange": "Huobi",
+    "buy_price": 0.3892,
+    "sell_price": 0.4111,
+    "profit_pct": 5.63,
+    "net_profit_pct": 5.23,
+    "risk": "low",
+    "volume_required": 34189,
+    "timestamp": "2025-12-14T19:02:25.848334"
+  },
+  {
+    "symbol": "XRP",
+    "name": "XRP",
+    "buy_exchange": "Bitfinex",
+    "sell_exchange": "Binance",
+    "buy_price": 1.9361,
+    "sell_price": 2.0423,
+    "profit_pct": 5.48,
+    "net_profit_pct": 5.08,
+    "risk": "low",
+    "volume_required": 69239,
+    "timestamp": "2025-12-14T19:02:25.848163"
+  },
+  {
+    "symbol": "DOGE",
+    "name": "Dogecoin",
+    "buy_exchange": "Bitfinex",
+    "sell_exchange": "Huobi",
+    "buy_price": 0.1312,
+    "sell_price": 0.1384,
+    "profit_pct": 5.45,
+    "net_profit_pct": 5.05,
+    "risk": "low",
+    "volume_required": 77501,
+    "timestamp": "2025-12-14T19:02:25.848313"
+  }
+]

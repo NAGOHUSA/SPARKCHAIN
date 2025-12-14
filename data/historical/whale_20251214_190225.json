@@ -1,0 +1,57 @@
+[
+  {
+    "symbol": "LINK",
+    "name": "Chainlink",
+    "activity": "Large Sell",
+    "direction": "bearish",
+    "amount_usd": 49392302,
+    "amount_coins": 3669561.8,
+    "significance": "high",
+    "confidence": 0.71,
+    "timestamp": "2025-12-14T19:02:25.848038"
+  },
+  {
+    "symbol": "ADA",
+    "name": "Cardano",
+    "activity": "Large Sell",
+    "direction": "bearish",
+    "amount_usd": 33783969,
+    "amount_coins": 84496889.38,
+    "significance": "high",
+    "confidence": 0.88,
+    "timestamp": "2025-12-14T19:02:25.848009"
+  },
+  {
+    "symbol": "XRP",
+    "name": "XRP",
+    "activity": "Large Sell",
+    "direction": "bearish",
+    "amount_usd": 32093561,
+    "amount_coins": 16127417.44,
+    "significance": "medium",
+    "confidence": 0.92,
+    "timestamp": "2025-12-14T19:02:25.847995"
+  },
+  {
+    "symbol": "DOGE",
+    "name": "Dogecoin",
+    "activity": "Wallet Accumulation",
+    "direction": "bullish",
+    "amount_usd": 28479036,
+    "amount_coins": 211340934.26,
+    "significance": "high",
+    "confidence": 0.82,
+    "timestamp": "2025-12-14T19:02:25.848021"
+  },
+  {
+    "symbol": "SOL",
+    "name": "Solana",
+    "activity": "Large Buy",
+    "direction": "bullish",
+    "amount_usd": 14291409,
+    "amount_coins": 109454.0,
+    "significance": "medium",
+    "confidence": 0.84,
+    "timestamp": "2025-12-14T19:02:25.847980"
+  }
+]

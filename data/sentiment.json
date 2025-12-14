@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-12-14T19:02:25.847740",
+  "fear_greed_index": 23,
+  "social_sentiment": 64.0,
+  "technical_sentiment": 50.0,
+  "derivatives_sentiment": 72.6,
+  "overall_sentiment": 52,
+  "trend": "neutral",
+  "indicators": {
+    "rsi": 35.7,
+    "macd": -0.2,
+    "volume_trend": "stable",
+    "market_strength": "strong"
+  }
+}
