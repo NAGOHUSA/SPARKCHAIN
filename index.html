@@ -721,21 +721,36 @@
                 
                 // Load all data files from GitHub
                 const responses = await Promise.all([
-                    fetch(`${baseUrl}latest.json?t=${Date.now()}`).catch(() => ({ ok: false })),
-                    fetch(`${baseUrl}predictions.json?t=${Date.now()}`).catch(() => ({ ok: false })),
-                    fetch(`${baseUrl}defi.json?t=${Date.now()}`).catch(() => ({ ok: false })),
-                    fetch(`${baseUrl}whale.json?t=${Date.now()}`).catch(() => ({ ok: false })),
-                    fetch(`${baseUrl}sentiment.json?t=${Date.now()}`).catch(() => ({ ok: false })),
-                    fetch(`${baseUrl}arbitrage.json?t=${Date.now()}`).catch(() => ({ ok: false }))
+                    fetch(`${baseUrl}latest.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}predictions.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}defi.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}whale.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}sentiment.json?t=${Date.now()}`),
+                    fetch(`${baseUrl}arbitrage.json?t=${Date.now()}`)
                 ]);
 
-                // Parse responses safely
-                currentData = await parseResponse(responses[0]);
-                predictionsData = await parseResponse(responses[1]);
-                defiData = await parseResponse(responses[2]);
-                whaleData = await parseResponse(responses[3]);
-                sentimentData = await parseResponse(responses[4]);
-                arbitrageData = await parseResponse(responses[5]);
+                // Check if all responses are OK
+                const responseStatus = responses.map((r, i) => {
+                    if (!r.ok) {
+                        const files = ['latest', 'predictions', 'defi', 'whale', 'sentiment', 'arbitrage'];
+                        console.error(`Failed to load ${files[i]}.json: ${r.status}`);
+                        return false;
+                    }
+                    return true;
+                });
+
+                // Parse all responses
+                const [marketData, predictions, defi, whale, sentiment, arbitrage] = await Promise.all(
+                    responses.map(r => r.ok ? r.json() : null)
+                );
+
+                // Assign to global variables
+                currentData = marketData;
+                predictionsData = predictions;
+                defiData = defi;
+                whaleData = whale;
+                sentimentData = sentiment;
+                arbitrageData = arbitrage;
                 
                 // Update all displays
                 updateDashboard();
@@ -754,20 +769,12 @@
                 console.error('Error loading data:', error);
                 document.getElementById('statusAlert').className = 'alert alert-danger';
                 document.getElementById('statusMessage').textContent = 
-                    'Error loading data • ' + (error.message || 'Unknown error');
+                    'Error loading data • ' + error.message;
+                
+                // Show specific error in console
+                console.log('Make sure your GitHub repository is public and files are accessible.');
             } finally {
                 showLoading(false);
-            }
-        }
-
-        // Helper function to parse responses safely
-        async function parseResponse(response) {
-            if (!response || !response.ok) return null;
-            try {
-                return await response.json();
-            } catch (e) {
-                console.error('Failed to parse JSON:', e);
-                return null;
             }
         }
 
@@ -790,7 +797,7 @@
                 
                 const marketCapChange = summary.market_cap_change_24h || 0;
                 document.getElementById('marketCapChange').textContent = 
-                    `${safeToFixed(marketCapChange, 1)}%`;
+                    `${formatNumber(marketCapChange, 1)}%`;
                 
                 // Update timestamp
                 document.getElementById('lastUpdated').querySelector('span').textContent = 
@@ -846,37 +853,56 @@
                         fearGreedStat.className = 'mb-0 text-success';
                     }
                 }
+                
+                // Update AI confidence based on sentiment
+                if (predictionsData && predictionsData.top_predictions) {
+                    const highConfidenceCount = predictionsData.top_predictions.filter(p => p.confidence === 'high').length;
+                    const totalPredictions = predictionsData.top_predictions.length;
+                    const confidencePercent = Math.round((highConfidenceCount / totalPredictions) * 100);
+                    document.getElementById('aiConfidence').textContent = `${confidencePercent}%`;
+                }
+                
             } catch (error) {
                 console.error('Error in updateSentiment:', error);
             }
         }
 
-        // Update predictions
+        // Update predictions - FIXED VERSION
         function updatePredictions() {
+            if (!predictionsData) {
+                console.log('No predictions data available');
+                return;
+            }
+            
             try {
-                if (!predictionsData) {
-                    console.log('No predictions data available');
-                    // Generate predictions from current data if available
-                    generatePredictions();
+                // Your predictions.json has top_predictions array
+                const topPredictions = predictionsData.top_predictions || [];
+                
+                if (topPredictions.length === 0) {
+                    console.log('No top predictions found');
                     return;
                 }
                 
+                // Calculate averages
+                let total7d = 0;
+                let total30d = 0;
+                let highPotential = 0;
+                
+                topPredictions.forEach(prediction => {
+                    total7d += prediction.prediction_7d || 0;
+                    total30d += prediction.prediction_30d || 0;
+                    if (prediction.confidence === 'high') {
+                        highPotential++;
+                    }
+                });
+                
+                const avg7d = total7d / topPredictions.length;
+                const avg30d = total30d / topPredictions.length;
+                
                 // Update prediction metrics
-                const metrics = predictionsData.prediction_metrics || {};
-                const topPredictions = predictionsData.top_predictions || [];
-                
-                // Update prediction metrics with safe values
-                const shortTerm = metrics.average_7d_prediction || 5.2;
-                const midTerm = metrics.average_30d_prediction || 12.8;
-                
-                document.getElementById('shortTermPrediction').textContent = `+${safeToFixed(shortTerm, 1)}%`;
-                document.getElementById('midTermPrediction').textContent = `+${safeToFixed(midTerm, 1)}%`;
-                
-                // Update AI confidence
-                const aiConfidence = metrics.high_confidence_count || 85;
-                document.getElementById('aiConfidence').textContent = `${safeToFixed(aiConfidence, 0)}%`;
-                document.getElementById('highPotentialCount').textContent = 
-                    topPredictions.length > 0 ? topPredictions.length : 5;
+                document.getElementById('shortTermPrediction').textContent = `+${formatNumber(avg7d, 1)}%`;
+                document.getElementById('midTermPrediction').textContent = `+${formatNumber(avg30d, 1)}%`;
+                document.getElementById('highPotentialCount').textContent = highPotential;
                 
                 // Update predictions grid
                 updatePredictionsGrid(topPredictions);
@@ -886,38 +912,7 @@
             }
         }
 
-        function generatePredictions() {
-            try {
-                if (!currentData || !currentData.trending_coins) {
-                    console.log('No data available for generating predictions');
-                    return;
-                }
-                
-                const coins = currentData.trending_coins.slice(0, 6);
-                
-                // Generate simple predictions
-                const predictions = coins.map(coin => {
-                    const change = coin.change_24h || coin.change24h || 0;
-                    const predictionScore = Math.min(100, 50 + (Math.abs(change) * 2));
-                    
-                    return {
-                        symbol: coin.symbol || 'N/A',
-                        name: coin.name || 'Unknown',
-                        price: coin.price || 0,
-                        change24h: change,
-                        predicted_change: change * 1.5,
-                        predictionScore: predictionScore,
-                        confidence: predictionScore > 80 ? 'high' : predictionScore > 60 ? 'medium' : 'low'
-                    };
-                });
-                
-                updatePredictionsGrid(predictions);
-                
-            } catch (error) {
-                console.error('Error generating predictions:', error);
-            }
-        }
-
+        // Update predictions grid - FIXED VERSION
         function updatePredictionsGrid(predictions) {
             const container = document.getElementById('aiPredictionsGrid');
             if (!container) return;
@@ -934,26 +929,30 @@
                 }
                 
                 let html = '';
-                predictions.slice(0, 6).forEach((prediction, index) => {
-                    const confidenceClass = (prediction.confidence || 'medium') === 'high' ? 'confidence-high' : 
-                                          (prediction.confidence || 'medium') === 'medium' ? 'confidence-medium' : 'confidence-low';
-                    const confidenceDot = (prediction.confidence || 'medium') === 'high' ? 'dot-high' : 
-                                        (prediction.confidence || 'medium') === 'medium' ? 'dot-medium' : 'dot-low';
+                // Show top 6 predictions
+                predictions.slice(0, 6).forEach(prediction => {
+                    const confidenceClass = prediction.confidence === 'high' ? 'confidence-high' : 
+                                          prediction.confidence === 'medium' ? 'confidence-medium' : 'confidence-low';
+                    const confidenceDot = prediction.confidence === 'high' ? 'dot-high' : 
+                                        prediction.confidence === 'medium' ? 'dot-medium' : 'dot-low';
                     
-                    const predictedChange = prediction.predicted_change || 0;
-                    const price = prediction.price || 0;
-                    const predictionScore = prediction.predictionScore || 50;
+                    // Your data uses prediction_score, prediction_7d, prediction_30d
+                    const predictionScore = prediction.prediction_score || 0;
+                    const prediction7d = prediction.prediction_7d || 0;
+                    const prediction30d = prediction.prediction_30d || 0;
+                    const currentPrice = prediction.current_price || 0;
+                    const change24h = prediction.change24h || 0;
                     
                     html += `
                         <div class="col-xl-4 col-lg-6 mb-3">
                             <div class="prediction-card">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div>
-                                        <h6 class="mb-1">${prediction.name || prediction.symbol}</h6>
+                                        <h6 class="mb-1">${prediction.name}</h6>
                                         <span class="badge bg-dark">${prediction.symbol}</span>
                                     </div>
                                     <div class="text-end">
-                                        <div class="prediction-up fw-bold">${safeToFixed(predictionScore, 0)}/100</div>
+                                        <div class="prediction-up fw-bold">${Math.round(predictionScore)}/100</div>
                                         <div class="small ${confidenceClass}">
                                             <span class="prediction-dot ${confidenceDot}"></span>
                                             ${(prediction.confidence || 'medium').charAt(0).toUpperCase() + (prediction.confidence || 'medium').slice(1)} Confidence
@@ -963,21 +962,33 @@
                                 
                                 <div class="mb-2">
                                     <div class="small text-muted">Current Price</div>
-                                    <div class="fw-bold">$${formatNumber(price)}</div>
+                                    <div class="fw-bold">$${formatNumber(currentPrice, 4)}</div>
+                                    <div class="small ${change24h >= 0 ? 'price-up' : 'price-down'}">
+                                        ${change24h >= 0 ? '+' : ''}${formatNumber(change24h, 2)}% 24h
+                                    </div>
                                 </div>
                                 
                                 <div class="row mb-2">
                                     <div class="col-6">
                                         <div class="small text-muted">7-Day Prediction</div>
-                                        <div class="fw-bold ${predictedChange >= 0 ? 'prediction-up' : 'price-down'}">
-                                            ${predictedChange >= 0 ? '+' : ''}${safeToFixed(predictedChange, 1)}%
+                                        <div class="fw-bold ${prediction7d >= 0 ? 'prediction-up' : 'price-down'}">
+                                            ${prediction7d >= 0 ? '+' : ''}${formatNumber(prediction7d, 1)}%
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="small text-muted">30-Day Prediction</div>
-                                        <div class="fw-bold ${predictedChange * 1.5 >= 0 ? 'prediction-up' : 'price-down'}">
-                                            ${predictedChange * 1.5 >= 0 ? '+' : ''}${safeToFixed(predictedChange * 1.5, 1)}%
+                                        <div class="fw-bold ${prediction30d >= 0 ? 'prediction-up' : 'price-down'}">
+                                            ${prediction30d >= 0 ? '+' : ''}${formatNumber(prediction30d, 1)}%
                                         </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <div class="small text-muted mb-1">Key Factors</div>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        ${(prediction.factors || []).map(factor => 
+                                            `<span class="badge bg-secondary small">${factor}</span>`
+                                        ).join('')}
                                     </div>
                                 </div>
                             </div>
@@ -1011,21 +1022,21 @@
                 document.getElementById('defiTVL').textContent = formatCurrency(totalTVL);
                 
                 if (defiData.top_protocols && defiData.top_protocols.length > 0) {
-                    document.getElementById('topProtocol').textContent = defiData.top_protocols[0].name || 'Unknown';
+                    const topProtocol = defiData.top_protocols[0];
+                    document.getElementById('topProtocol').textContent = topProtocol.name || 'Unknown';
                     document.getElementById('protocolTVL').textContent = 
-                        formatCurrency(defiData.top_protocols[0].tvl || 0) + ' TVL';
+                        formatCurrency(topProtocol.tvl || 0) + ' TVL';
                 }
                 
                 // Update DeFi tables
                 updateDeFiTables();
-                updateYieldOpportunities();
                 
             } catch (error) {
                 console.error('Error in updateDeFiData:', error);
             }
         }
 
-        // Update whale tracker
+        // Update whale tracker - FIXED VERSION
         function updateWhaleTracker() {
             if (!whaleData) {
                 console.log('No whale data available');
@@ -1039,37 +1050,84 @@
             }
         }
 
-        // Update arbitrage opportunities
-        function updateArbitrage() {
-            if (!arbitrageData || !Array.isArray(arbitrageData)) {
-                console.log('No arbitrage data available');
+        // Update whale table - FIXED VERSION
+        function updateWhaleTable() {
+            if (!whaleData || !Array.isArray(whaleData)) {
+                console.log('No whale data array available');
                 return;
             }
             
+            const tbody = document.getElementById('whaleTrackerTable');
+            if (!tbody) return;
+            
             try {
-                const container = document.getElementById('arbitrageOpportunities');
-                if (!container) return;
+                tbody.innerHTML = '';
                 
-                container.innerHTML = '';
-                
-                arbitrageData.slice(0, 6).forEach(opp => {
-                    const col = document.createElement('div');
-                    col.className = 'col-md-4 mb-3';
-                    col.innerHTML = `
-                        <div class="crypto-card">
-                            <h6>${opp.pair || 'N/A'}</h6>
-                            <div class="small text-muted">${opp.exchange1 || ''} → ${opp.exchange2 || ''}</div>
-                            <div class="mt-2">
-                                <span class="badge bg-success">${safeToFixed(opp.profit || 0, 2)}%</span>
-                                <span class="small text-muted ms-2">${opp.volume || 'Low'} volume</span>
-                            </div>
-                        </div>
+                // Your whale.json is an array of objects
+                whaleData.forEach(activity => {
+                    // Your data uses: symbol, name, activity, direction, amount_usd, amount_coins, significance, confidence, timestamp
+                    const directionClass = activity.direction === 'bullish' ? 'price-up' : 
+                                         activity.direction === 'bearish' ? 'price-down' : 'text-muted';
+                    const directionText = activity.direction === 'bullish' ? 'Buy' : 
+                                        activity.direction === 'bearish' ? 'Sell' : 'Neutral';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <strong>${activity.symbol || 'N/A'}</strong><br>
+                            <small class="text-muted">${activity.name || ''}</small>
+                        </td>
+                        <td>${activity.activity || 'Unknown'}</td>
+                        <td>${formatCurrency(activity.amount_usd || 0)}</td>
+                        <td class="${directionClass}">${directionText}</td>
+                        <td>
+                            <span class="badge ${activity.significance === 'high' ? 'bg-danger' : 
+                                              activity.significance === 'medium' ? 'bg-warning' : 'bg-secondary'}">
+                                ${activity.significance || 'low'}
+                            </span>
+                        </td>
+                        <td>${new Date(activity.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                     `;
-                    container.appendChild(col);
+                    tbody.appendChild(row);
                 });
+                
+                // If no data, show message
+                if (whaleData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="fas fa-whale fa-2x mb-3"></i>
+                                <p>No whale activity detected</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
             } catch (error) {
-                console.error('Error in updateArbitrage:', error);
+                console.error('Error in updateWhaleTable:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <p>Error loading whale data</p>
+                        </td>
+                    </tr>
+                `;
             }
+        }
+
+        // Update arbitrage opportunities
+        function updateArbitrage() {
+            // This function remains as a placeholder since arbitrage.json wasn't provided
+            const container = document.getElementById('arbitrageOpportunities');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="col-12 text-center py-4">
+                    <i class="fas fa-exchange-alt fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">No arbitrage opportunities detected</p>
+                </div>
+            `;
         }
 
         // Update top coins table
@@ -1109,10 +1167,10 @@
                                 <strong>${coin.symbol || 'N/A'}</strong>
                                 <div class="small text-muted">${coin.name || 'Unknown'}</div>
                             </td>
-                            <td>$${formatNumber(price)}</td>
+                            <td>$${formatNumber(price, 4)}</td>
                             <td class="${changeClass}">
                                 <i class="fas ${changeIcon} me-1"></i>
-                                ${safeToFixed(Math.abs(change24h), 2)}%
+                                ${formatNumber(Math.abs(change24h), 2)}%
                             </td>
                             <td>$${formatCurrency(marketCap)}</td>
                             <td>$${formatCurrency(volume24h)}</td>
@@ -1162,7 +1220,7 @@
                         <td><span class="badge bg-secondary">${protocol.category || 'Unknown'}</span></td>
                         <td>${formatCurrency(protocol.tvl || 0)}</td>
                         <td class="${(protocol.change_24h || 0) >= 0 ? 'price-up' : 'price-down'}">
-                            ${(protocol.change_24h || 0) >= 0 ? '+' : ''}${safeToFixed(protocol.change_24h || 0, 2)}%
+                            ${(protocol.change_24h || 0) >= 0 ? '+' : ''}${formatNumber(protocol.change_24h || 0, 2)}%
                         </td>
                         <td>${protocol.token || 'N/A'}</td>
                         <td>
@@ -1178,83 +1236,14 @@
             }
         }
 
-        // Update yield opportunities
-        function updateYieldOpportunities() {
-            if (!defiData || !defiData.yield_opportunities) return;
-            
-            const container = document.getElementById('yieldOpportunities');
-            if (!container) return;
-            
-            try {
-                container.innerHTML = '';
-                
-                (defiData.yield_opportunities || []).slice(0, 4).forEach(yieldOpp => {
-                    const col = document.createElement('div');
-                    col.className = 'col-md-3 mb-3';
-                    col.innerHTML = `
-                        <div class="defi-card">
-                            <h6>${yieldOpp.protocol || 'N/A'}</h6>
-                            <div class="small text-muted">${yieldOpp.asset || 'Unknown'}</div>
-                            <div class="mt-2">
-                                <span class="badge bg-success">APY: ${safeToFixed(yieldOpp.apy || 0, 2)}%</span>
-                            </div>
-                            <div class="mt-2 small">
-                                Risk: <span class="${yieldOpp.risk === 'low' ? 'text-success' : 
-                                                   yieldOpp.risk === 'medium' ? 'text-warning' : 'text-danger'}">
-                                    ${yieldOpp.risk || 'medium'}
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(col);
-                });
-            } catch (error) {
-                console.error('Error in updateYieldOpportunities:', error);
-            }
-        }
-
-        // Update whale table
-        function updateWhaleTable() {
-            if (!whaleData || !Array.isArray(whaleData)) return;
-            
-            const tbody = document.getElementById('whaleTrackerTable');
-            if (!tbody) return;
-            
-            try {
-                tbody.innerHTML = '';
-                
-                whaleData.slice(0, 10).forEach(activity => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>${activity.asset || 'N/A'}</strong></td>
-                        <td>${activity.activity_type || 'Unknown'}</td>
-                        <td>${formatCurrency(activity.amount || 0)}</td>
-                        <td class="${activity.direction === 'buy' ? 'price-up' : 'price-down'}">
-                            ${activity.direction === 'buy' ? 'Buy' : 'Sell'}
-                        </td>
-                        <td>
-                            <span class="badge ${activity.significance === 'high' ? 'bg-danger' : 
-                                              activity.significance === 'medium' ? 'bg-warning' : 'bg-secondary'}">
-                                ${activity.significance || 'low'}
-                            </span>
-                        </td>
-                        <td>${new Date(activity.timestamp || Date.now()).toLocaleTimeString()}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error in updateWhaleTable:', error);
-            }
-        }
-
-        // Safe utility functions
-        function safeToFixed(value, decimals) {
+        // Utility functions
+        function formatNumber(value, decimals = 2) {
             try {
                 const num = parseFloat(value);
                 if (isNaN(num)) return '0';
                 return num.toFixed(decimals);
             } catch (error) {
-                console.error('Error in safeToFixed:', error);
+                console.error('Error in formatNumber:', error);
                 return '0';
             }
         }
@@ -1280,25 +1269,6 @@
             }
         }
 
-        function formatNumber(value) {
-            try {
-                const num = parseFloat(value);
-                if (isNaN(num)) return '0';
-                
-                if (num < 0.01) {
-                    return num.toFixed(8);
-                } else if (num < 1) {
-                    return num.toFixed(4);
-                } else if (num < 1000) {
-                    return num.toFixed(2);
-                }
-                return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            } catch (error) {
-                console.error('Error in formatNumber:', error);
-                return '0';
-            }
-        }
-
         function showLoading(show) {
             try {
                 const btn = document.getElementById('refreshBtn');
@@ -1320,11 +1290,7 @@
                 const tabTriggers = document.querySelectorAll('[data-bs-toggle="tab"]');
                 tabTriggers.forEach(trigger => {
                     trigger.addEventListener('shown.bs.tab', function(event) {
-                        const target = event.target.getAttribute('href');
-                        // Refresh data for tab if needed
-                        if (target === '#tab-predictions' && (!predictionsData)) {
-                            generatePredictions();
-                        }
+                        // Optional: You can add tab-specific refresh logic here
                     });
                 });
             } catch (error) {
@@ -1352,12 +1318,15 @@
                 
                 if (marketChart) {
                     const ctx = marketChart.getContext('2d');
-                    new Chart(ctx, {
+                    if (charts.marketOverviewChart) {
+                        charts.marketOverviewChart.destroy();
+                    }
+                    charts.marketOverviewChart = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: ['6h ago', '5h ago', '4h ago', '3h ago', '2h ago', '1h ago', 'Now'],
                             datasets: [{
-                                label: 'Market Cap',
+                                label: 'Market Trend',
                                 data: [2200, 2250, 2300, 2350, 2340, 2360, 2400],
                                 borderColor: 'rgb(0, 173, 181)',
                                 backgroundColor: 'rgba(0, 173, 181, 0.1)',
@@ -1379,6 +1348,11 @@
                 
                 if (sentimentChart) {
                     const ctx = sentimentChart.getContext('2d');
+                    if (charts.sentimentChart) {
+                        charts.sentimentChart.destroy();
+                    }
+                    
+                    // Get sentiment data or use default
                     const sentimentValue = sentimentData ? (sentimentData.fear_greed_index || 50) : 50;
                     
                     let fear = 0, neutral = 0, greed = 0;
@@ -1396,7 +1370,7 @@
                         greed = 70;
                     }
                     
-                    new Chart(ctx, {
+                    charts.sentimentChart = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
                             labels: ['Fear', 'Neutral', 'Greed'],
