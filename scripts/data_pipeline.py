@@ -29,6 +29,11 @@ CONFIG = {
     "min_volume": 100000
 }
 
+def safe_get(data, key, default=0):
+    """Safely get value from dictionary, converting None to default"""
+    value = data.get(key, default)
+    return default if value is None else value
+
 def fetch_coingecko_data():
     """Fetch comprehensive market data from CoinGecko"""
     try:
@@ -149,13 +154,14 @@ def calculate_spark_score(coin):
     scores = []
     
     # Price momentum (0-25 points)
-    change_24h = abs(coin.get('price_change_percentage_24h', 0))
-    momentum_score = min(25, change_24h * 0.25)
+    change_24h = safe_get(coin, 'price_change_percentage_24h', 0)
+    momentum_score = min(25, abs(change_24h) * 0.25)
     scores.append(momentum_score)
     
     # Volume health (0-20 points)
-    market_cap = coin.get('market_cap', 0)
-    volume = coin.get('total_volume', 0)
+    market_cap = safe_get(coin, 'market_cap', 0)
+    volume = safe_get(coin, 'total_volume', 0)
+    
     if market_cap > 0 and volume > 0:
         volume_ratio = (volume / market_cap) * 100
         volume_score = min(20, volume_ratio * 2)
@@ -188,7 +194,7 @@ def calculate_spark_score(coin):
     scores.append(liquidity_score)
     
     # Stability (0-10 points)
-    price = coin.get('current_price', 0)
+    price = safe_get(coin, 'current_price', 0)
     if price > 100:
         stability_score = 10
     elif price > 10:
@@ -214,16 +220,18 @@ def calculate_prediction_score(coin_data):
     score = 50  # Base score
     
     # Momentum factor (0-20 points)
-    change_24h = coin_data.get('change24h', 0)
+    change_24h = safe_get(coin_data, 'change24h', 0)
     if change_24h > 0:
         score += min(20, change_24h * 0.4)
     
     # Volume growth factor (0-15 points)
-    volume_ratio = coin_data.get('volume24h', 0) / max(1, coin_data.get('marketCap', 1))
+    volume24h = safe_get(coin_data, 'volume24h', 0)
+    marketCap = safe_get(coin_data, 'marketCap', 1)
+    volume_ratio = volume24h / max(1, marketCap)
     score += min(15, volume_ratio * 300)
     
     # Market cap position (0-15 points)
-    market_cap = coin_data.get('marketCap', 0)
+    market_cap = safe_get(coin_data, 'marketCap', 0)
     if 50000000 < market_cap < 500000000:  # Sweet spot for growth
         score += 15
     elif market_cap < 50000000:  # Micro-cap high risk/reward
@@ -234,7 +242,9 @@ def calculate_prediction_score(coin_data):
         score += 5
     
     # Technical factor (0-10 points)
-    if coin_data.get('price', 0) > coin_data.get('ath', 0) * 0.7:
+    price = safe_get(coin_data, 'price', 0)
+    ath = safe_get(coin_data, 'ath', 0)
+    if price > ath * 0.7:
         score += 5
     
     # Random innovation factor (0-10 points)
@@ -244,10 +254,11 @@ def calculate_prediction_score(coin_data):
 
 def predict_future_change(coin_data):
     """Predict future price changes"""
-    volatility_factor = 0.12 if coin_data.get('marketCap', 0) > 1000000000 else 0.25
+    market_cap = safe_get(coin_data, 'marketCap', 0)
+    volatility_factor = 0.12 if market_cap > 1000000000 else 0.25
     
     # Base on current momentum
-    current_change = coin_data.get('change24h', 0)
+    current_change = safe_get(coin_data, 'change24h', 0)
     base_7d = current_change * 0.8 if current_change > 0 else 3
     base_30d = current_change * 1.8 if current_change > 0 else 8
     
@@ -274,8 +285,11 @@ def identify_new_coins(existing_data, new_data):
     
     for coin in new_data:
         if coin['symbol'].upper() not in existing_symbols:
-            if (coin.get('marketCap', 0) >= CONFIG['min_market_cap'] and 
-                coin.get('volume24h', 0) >= CONFIG['min_volume']):
+            market_cap = safe_get(coin, 'marketCap', 0)
+            volume24h = safe_get(coin, 'volume24h', 0)
+            
+            if (market_cap >= CONFIG['min_market_cap'] and 
+                volume24h >= CONFIG['min_volume']):
                 
                 # Calculate new coin score
                 score = calculate_prediction_score(coin)
@@ -296,7 +310,7 @@ def detect_whale_activity(coins_data):
     
     for symbol in top_coins:
         coin = next((c for c in coins_data if c['symbol'] == symbol), None)
-        if not coin or coin['price'] <= 0:
+        if not coin or safe_get(coin, 'price', 0) <= 0:
             continue
         
         # Simulate whale activity
@@ -311,12 +325,12 @@ def detect_whale_activity(coins_data):
         activity_type, direction = activity_types[np.random.randint(0, len(activity_types))]
         
         # Generate realistic amounts
-        price = coin['price']
+        price = safe_get(coin, 'price', 0)
         amount_usd = np.random.uniform(1, 50) * 1000000  # $1M to $50M
         amount_coins = amount_usd / price
         
         # Significance based on market cap percentage
-        market_cap = coin['marketCap']
+        market_cap = safe_get(coin, 'marketCap', 0)
         significance_pct = (amount_usd / market_cap) * 100
         
         significance = "high" if significance_pct > 0.1 else "medium" if significance_pct > 0.01 else "low"
@@ -342,14 +356,15 @@ def detect_arbitrage_opportunities(coins_data):
     opportunities = []
     
     for coin in coins_data[:15]:  # Check top 15 coins
-        if coin['price'] <= 0:
+        price = safe_get(coin, 'price', 0)
+        if price <= 0:
             continue
         
         # Generate simulated exchange prices
         exchange_prices = {}
         for exchange in exchanges:
             variation = np.random.uniform(-0.03, 0.03)  # ±3% variation
-            exchange_prices[exchange] = coin['price'] * (1 + variation)
+            exchange_prices[exchange] = price * (1 + variation)
         
         # Find arbitrage opportunity
         min_exchange = min(exchange_prices, key=exchange_prices.get)
@@ -395,21 +410,16 @@ def process_market_data():
         processed_coin = {
             'symbol': coin.get('symbol', '').upper(),
             'name': coin.get('name', ''),
-            'price': coin.get('current_price', 0),
-            'change24h': coin.get('price_change_percentage_24h', 0),
-            'marketCap': coin.get('market_cap', 0),
-            'volume24h': coin.get('total_volume', 0),
-            'ath': coin.get('ath', 0),
-            'ath_change_percentage': coin.get('ath_change_percentage', 0),
+            'price': safe_get(coin, 'current_price', 0),
+            'change24h': safe_get(coin, 'price_change_percentage_24h', 0),
+            'marketCap': safe_get(coin, 'market_cap', 0),
+            'volume24h': safe_get(coin, 'total_volume', 0),
+            'ath': safe_get(coin, 'ath', 0),
+            'ath_change_percentage': safe_get(coin, 'ath_change_percentage', 0),
             'sparkScore': calculate_spark_score(coin),
-            'circulating_supply': coin.get('circulating_supply', 0),
-            'total_supply': coin.get('total_supply', 0)
+            'circulating_supply': safe_get(coin, 'circulating_supply', 0),
+            'total_supply': safe_get(coin, 'total_supply', 0)
         }
-        
-        # Handle None values
-        for key in ['price', 'change24h', 'marketCap', 'volume24h', 'sparkScore']:
-            if processed_coin[key] is None:
-                processed_coin[key] = 0
         
         processed_coins.append(processed_coin)
     
